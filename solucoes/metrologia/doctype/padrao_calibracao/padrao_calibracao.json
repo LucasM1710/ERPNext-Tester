@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "data_calibracao",
+  "data_validade",
+  "numero_certificado",
+  "laboratorio_calibrador",
+  "acreditado",
+  "incerteza_expandida",
+  "arquivo"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "data_calibracao",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Data da Calibração",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Vazio = data + periodicidade do padrão",
+   "fieldname": "data_validade",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Válido até"
+  },
+  {
+   "columns": 2,
+   "fieldname": "numero_certificado",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nº do Certificado",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "laboratorio_calibrador",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Laboratório"
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "acreditado",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Acreditado"
+  },
+  {
+   "columns": 1,
+   "fieldname": "incerteza_expandida",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "U",
+   "precision": "6"
+  },
+  {
+   "fieldname": "arquivo",
+   "fieldtype": "Attach",
+   "label": "Certificado (PDF)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Padrao Calibracao",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

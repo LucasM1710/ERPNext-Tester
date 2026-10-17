@@ -70,9 +70,12 @@ app_license = "mit"
 # home_page = "login"
 
 # website user home page (by Role)
-# role_home_page = {
-# 	"Role": "home_page"
-# }
+role_home_page = {"Customer": "cliente"}
+
+# Portal do Cliente (SPA Vue): todas as sub-rotas de /cliente servem a mesma página
+website_route_rules = [
+	{"from_route": "/cliente/<path:app_path>", "to_route": "cliente"},
+]
 
 # Generators
 # ----------
@@ -97,6 +100,7 @@ app_license = "mit"
 
 # before_install = "solucoes.install.before_install"
 # after_install = "solucoes.install.after_install"
+after_migrate = "solucoes.setup.after_migrate"
 
 # Uninstallation
 # ------------
@@ -187,6 +191,15 @@ app_license = "mit"
 # 		"solucoes.tasks.monthly"
 # 	],
 # }
+scheduler_events = {
+	"daily": [
+		"solucoes.metrologia.utils.atualizar_situacao_equipamentos",
+		"solucoes.metrologia.utils.atualizar_situacao_padroes",
+	],
+	"weekly": [
+		"solucoes.portal.notificacoes.enviar_resumos_semanais",
+	],
+}
 
 # Testing
 # -------

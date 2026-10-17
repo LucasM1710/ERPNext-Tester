@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "scripts": {
+    "portal:install": "cd frontend && yarn install",
+    "portal:dev": "cd frontend && yarn dev",
+    "portal:build": "cd frontend && yarn build"
+  }
+}

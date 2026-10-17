@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "padrao",
+  "descricao",
+  "numero_certificado",
+  "laboratorio_calibrador",
+  "acreditado",
+  "data_validade"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "padrao",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Padrão",
+   "options": "Padrao Metrologia",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "descricao",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Descrição",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "description": "Calibração do padrão válida na data deste certificado (congelada)",
+   "fieldname": "numero_certificado",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Certificado do Padrão",
+   "read_only": 1
+  },
+  {
+   "fieldname": "laboratorio_calibrador",
+   "fieldtype": "Data",
+   "label": "Laboratório",
+   "read_only": 1
+  },
+  {
+   "fieldname": "acreditado",
+   "fieldtype": "Check",
+   "label": "Acreditado",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "data_validade",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Validade",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Certificado Padrao Utilizado",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

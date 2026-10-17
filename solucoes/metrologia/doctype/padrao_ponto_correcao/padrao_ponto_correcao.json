@@ -1,0 +1,62 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "valor_nominal",
+  "correcao",
+  "incerteza",
+  "fator_k"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "valor_nominal",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Valor Nominal",
+   "precision": "6",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "description": "Valor a somar à indicação do padrão (= −erro)",
+   "fieldname": "correcao",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Correção",
+   "precision": "6"
+  },
+  {
+   "columns": 2,
+   "fieldname": "incerteza",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Incerteza (U)",
+   "precision": "6"
+  },
+  {
+   "columns": 2,
+   "default": "2",
+   "fieldname": "fator_k",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "k",
+   "precision": "3"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Padrao Ponto Correcao",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

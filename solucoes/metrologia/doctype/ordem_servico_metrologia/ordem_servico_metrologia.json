@@ -1,0 +1,235 @@
+{
+ "actions": [],
+ "autoname": "format:OSM-{YYYY}-{#####}",
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_principal",
+  "cliente",
+  "contato",
+  "tipo_servico",
+  "local_atendimento",
+  "cb_principal",
+  "status",
+  "data_solicitacao",
+  "data_prevista",
+  "data_conclusao",
+  "origem",
+  "sec_itens",
+  "itens",
+  "sec_comercial",
+  "orcamento",
+  "status_orcamento",
+  "cb_comercial",
+  "coleta",
+  "endereco_coleta",
+  "sec_obs",
+  "observacoes_cliente",
+  "observacoes_internas",
+  "sec_historico",
+  "historico"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_principal",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "contato",
+   "fieldtype": "Link",
+   "label": "Contato",
+   "options": "Contact"
+  },
+  {
+   "default": "Calibração",
+   "fieldname": "tipo_servico",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tipo de Serviço",
+   "options": "Calibração\nManutenção\nCalibração + Manutenção"
+  },
+  {
+   "default": "Laboratório",
+   "fieldname": "local_atendimento",
+   "fieldtype": "Select",
+   "label": "Local de Atendimento",
+   "options": "Laboratório\nIn Loco"
+  },
+  {
+   "fieldname": "cb_principal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "default": "Solicitada",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Solicitada\nRecebida\nEm Análise\nAguardando Aprovação\nEm Execução\nConcluída\nEnviada\nCancelada"
+  },
+  {
+   "default": "Today",
+   "fieldname": "data_solicitacao",
+   "fieldtype": "Date",
+   "label": "Data da Solicitação",
+   "reqd": 1
+  },
+  {
+   "fieldname": "data_prevista",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Previsão de Entrega"
+  },
+  {
+   "fieldname": "data_conclusao",
+   "fieldtype": "Date",
+   "label": "Data de Conclusão",
+   "read_only": 1
+  },
+  {
+   "default": "Interno",
+   "fieldname": "origem",
+   "fieldtype": "Select",
+   "label": "Origem",
+   "options": "Interno\nPortal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_itens",
+   "fieldtype": "Section Break",
+   "label": "Equipamentos"
+  },
+  {
+   "fieldname": "itens",
+   "fieldtype": "Table",
+   "label": "Itens",
+   "options": "Ordem Servico Metrologia Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sec_comercial",
+   "fieldtype": "Section Break",
+   "label": "Comercial"
+  },
+  {
+   "fieldname": "orcamento",
+   "fieldtype": "Link",
+   "label": "Orçamento",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "status_orcamento",
+   "fieldtype": "Select",
+   "label": "Status do Orçamento",
+   "options": "\nAguardando Cliente\nAprovado\nRecusado",
+   "read_only": 0
+  },
+  {
+   "fieldname": "cb_comercial",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "coleta",
+   "fieldtype": "Check",
+   "label": "Solicitar Coleta"
+  },
+  {
+   "depends_on": "coleta",
+   "fieldname": "endereco_coleta",
+   "fieldtype": "Small Text",
+   "label": "Endereço de Coleta"
+  },
+  {
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break",
+   "label": "Observações"
+  },
+  {
+   "fieldname": "observacoes_cliente",
+   "fieldtype": "Small Text",
+   "label": "Observações do Cliente"
+  },
+  {
+   "fieldname": "observacoes_internas",
+   "fieldtype": "Small Text",
+   "label": "Observações Internas"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_historico",
+   "fieldtype": "Section Break",
+   "label": "Histórico"
+  },
+  {
+   "fieldname": "historico",
+   "fieldtype": "Table",
+   "label": "Histórico de Status",
+   "options": "Ordem Servico Metrologia Evento",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Ordem Servico Metrologia",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "cliente,status",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

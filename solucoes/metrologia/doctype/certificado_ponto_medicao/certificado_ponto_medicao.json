@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "valor_nominal",
+  "valor_encontrado",
+  "valor_medido",
+  "erro",
+  "incerteza",
+  "tolerancia",
+  "conforme"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "valor_nominal",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Valor Nominal",
+   "precision": "6",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Leitura antes do ajuste (opcional)",
+   "fieldname": "valor_encontrado",
+   "fieldtype": "Float",
+   "label": "Encontrado (as found)",
+   "precision": "6"
+  },
+  {
+   "columns": 2,
+   "fieldname": "valor_medido",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Valor Medido",
+   "precision": "6",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "erro",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Erro",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "incerteza",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Incerteza (U)",
+   "precision": "6"
+  },
+  {
+   "columns": 1,
+   "description": "Vazio = usa a tolerância do equipamento",
+   "fieldname": "tolerancia",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tolerância (±)",
+   "precision": "6"
+  },
+  {
+   "columns": 1,
+   "fieldname": "conforme",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Conforme",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Certificado Ponto Medicao",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

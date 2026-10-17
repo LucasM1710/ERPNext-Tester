@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "equipamento",
+  "tag",
+  "servico",
+  "status_item",
+  "certificado",
+  "laudo"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "equipamento",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Equipamento",
+   "options": "Equipamento Cliente",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "equipamento.tag",
+   "fieldname": "tag",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "TAG",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "default": "Calibração",
+   "fieldname": "servico",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Serviço",
+   "options": "Calibração\nManutenção\nCalibração + Manutenção"
+  },
+  {
+   "columns": 2,
+   "default": "Pendente",
+   "fieldname": "status_item",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pendente\nEm Execução\nConcluído\nSem Reparo"
+  },
+  {
+   "columns": 1,
+   "fieldname": "certificado",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Certificado",
+   "options": "Certificado Calibracao"
+  },
+  {
+   "fieldname": "laudo",
+   "fieldtype": "Small Text",
+   "label": "Laudo / Defeito Encontrado"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Ordem Servico Metrologia Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

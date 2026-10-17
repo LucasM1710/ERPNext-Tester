@@ -1,0 +1,194 @@
+{
+ "actions": [],
+ "autoname": "format:VI-{YYYY}-{#####}",
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_principal",
+  "equipamento_doctype",
+  "equipamento",
+  "tag",
+  "cliente",
+  "distrito",
+  "cb_principal",
+  "data",
+  "realizado_por",
+  "referencia_utilizada",
+  "resultado",
+  "tolerancia",
+  "sec_pontos",
+  "pontos",
+  "sec_obs",
+  "observacao",
+  "foto"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_principal",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Equipamento Cliente",
+   "fieldname": "equipamento_doctype",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Tipo de Equipamento",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "equipamento",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Equipamento",
+   "options": "equipamento_doctype",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "tag",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "TAG",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "distrito",
+   "fieldtype": "Link",
+   "label": "Distrito",
+   "options": "Distrito Cliente",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_principal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "now",
+   "fieldname": "data",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "realizado_por",
+   "fieldtype": "Link",
+   "label": "Realizado por",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "description": "Ex.: bloco padrão 50 mm do cliente, peso 1 kg",
+   "fieldname": "referencia_utilizada",
+   "fieldtype": "Data",
+   "label": "Referência Utilizada"
+  },
+  {
+   "bold": 1,
+   "fieldname": "resultado",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Resultado",
+   "options": "\nConforme\nNão Conforme",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tolerancia",
+   "fieldtype": "Float",
+   "label": "Tolerância (±)",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_pontos",
+   "fieldtype": "Section Break",
+   "label": "Leituras"
+  },
+  {
+   "fieldname": "pontos",
+   "fieldtype": "Table",
+   "label": "Pontos",
+   "options": "Verificacao Intermediaria Ponto",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "observacao",
+   "fieldtype": "Small Text",
+   "label": "Observação"
+  },
+  {
+   "fieldname": "foto",
+   "fieldtype": "Attach Image",
+   "label": "Foto"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Verificacao Intermediaria",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "equipamento,tag,cliente",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "tag",
+ "track_changes": 1
+}

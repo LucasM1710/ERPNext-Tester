@@ -1,0 +1,364 @@
+{
+ "actions": [],
+ "autoname": "format:EQP-{#####}",
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_identificacao",
+  "cliente",
+  "tag",
+  "descricao",
+  "grandeza",
+  "cb_identificacao",
+  "status",
+  "distrito",
+  "localizacao",
+  "responsavel",
+  "imagem",
+  "sec_tecnico",
+  "fabricante",
+  "modelo",
+  "numero_serie",
+  "cb_tecnico",
+  "faixa_medicao",
+  "resolucao",
+  "unidade",
+  "sec_calibracao",
+  "calibrado_por",
+  "fornecedor_externo",
+  "periodicidade_meses",
+  "tolerancia",
+  "cb_calibracao",
+  "ultima_calibracao",
+  "proxima_calibracao",
+  "situacao_calibracao",
+  "ultimo_certificado",
+  "sec_verificacao",
+  "verificacao_intervalo_dias",
+  "tolerancia_verificacao",
+  "cb_verificacao",
+  "ultima_verificacao",
+  "proxima_verificacao",
+  "resultado_ultima_verificacao",
+  "sec_origem",
+  "origem_cadastro",
+  "cadastrado_por_usuario",
+  "sec_obs",
+  "observacoes"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_identificacao",
+   "fieldtype": "Section Break",
+   "label": "Identificação"
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "tag",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "TAG / Código Interno",
+   "reqd": 1
+  },
+  {
+   "fieldname": "descricao",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Descrição",
+   "reqd": 1
+  },
+  {
+   "fieldname": "grandeza",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Grandeza",
+   "options": "\nDimensional\nPressão\nTemperatura\nUmidade\nElétrica\nMassa\nForça\nTorque\nVolume\nVazão\nTempo e Frequência\nÓptica\nOutros"
+  },
+  {
+   "fieldname": "cb_identificacao",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Ativo",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Ativo\nEm Calibração\nEm Manutenção\nReserva\nInativo\nSucateado"
+  },
+  {
+   "description": "Usado quando o cliente tem controle por distritos ativado",
+   "fieldname": "distrito",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Distrito",
+   "options": "Distrito Cliente",
+   "search_index": 1
+  },
+  {
+   "fieldname": "localizacao",
+   "fieldtype": "Data",
+   "label": "Localização / Setor"
+  },
+  {
+   "fieldname": "responsavel",
+   "fieldtype": "Data",
+   "label": "Responsável"
+  },
+  {
+   "fieldname": "imagem",
+   "fieldtype": "Attach Image",
+   "label": "Imagem"
+  },
+  {
+   "fieldname": "sec_tecnico",
+   "fieldtype": "Section Break",
+   "label": "Dados Técnicos"
+  },
+  {
+   "fieldname": "fabricante",
+   "fieldtype": "Data",
+   "label": "Fabricante"
+  },
+  {
+   "fieldname": "modelo",
+   "fieldtype": "Data",
+   "label": "Modelo"
+  },
+  {
+   "fieldname": "numero_serie",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Número de Série"
+  },
+  {
+   "fieldname": "cb_tecnico",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "faixa_medicao",
+   "fieldtype": "Data",
+   "label": "Faixa de Medição"
+  },
+  {
+   "fieldname": "resolucao",
+   "fieldtype": "Data",
+   "label": "Resolução"
+  },
+  {
+   "fieldname": "unidade",
+   "fieldtype": "Data",
+   "label": "Unidade de Medida"
+  },
+  {
+   "fieldname": "sec_calibracao",
+   "fieldtype": "Section Break",
+   "label": "Calibração"
+  },
+  {
+   "default": "Nosso Laboratório",
+   "fieldname": "calibrado_por",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Calibrado por",
+   "options": "Nosso Laboratório\nTerceiro",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.calibrado_por=='Terceiro'",
+   "fieldname": "fornecedor_externo",
+   "fieldtype": "Data",
+   "label": "Laboratório Externo",
+   "mandatory_depends_on": "eval:doc.calibrado_por=='Terceiro'"
+  },
+  {
+   "default": "12",
+   "fieldname": "periodicidade_meses",
+   "fieldtype": "Int",
+   "label": "Periodicidade (meses)",
+   "non_negative": 1
+  },
+  {
+   "description": "Erro máximo admissível, na unidade do equipamento. Usado na análise crítica automática.",
+   "fieldname": "tolerancia",
+   "fieldtype": "Float",
+   "label": "Tolerância (±)",
+   "precision": "6"
+  },
+  {
+   "fieldname": "cb_calibracao",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ultima_calibracao",
+   "fieldtype": "Date",
+   "label": "Última Calibração",
+   "read_only": 1
+  },
+  {
+   "fieldname": "proxima_calibracao",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Próxima Calibração",
+   "search_index": 1
+  },
+  {
+   "fieldname": "situacao_calibracao",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Situação",
+   "options": "\nEm Dia\nA Vencer\nVencido\nSem Calibração",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ultimo_certificado",
+   "fieldtype": "Link",
+   "label": "Último Certificado",
+   "options": "Certificado Calibracao",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "description": "Checagem rápida feita pelo cliente entre calibrações (ISO/IEC 17025 6.4.10). Deixe o intervalo vazio se não se aplica.",
+   "fieldname": "sec_verificacao",
+   "fieldtype": "Section Break",
+   "label": "Verificação Intermediária"
+  },
+  {
+   "fieldname": "verificacao_intervalo_dias",
+   "fieldtype": "Int",
+   "label": "Intervalo (dias)",
+   "non_negative": 1
+  },
+  {
+   "description": "Vazio = usa a tolerância do equipamento",
+   "fieldname": "tolerancia_verificacao",
+   "fieldtype": "Float",
+   "label": "Tolerância da verificação (±)",
+   "precision": "6"
+  },
+  {
+   "fieldname": "cb_verificacao",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ultima_verificacao",
+   "fieldtype": "Date",
+   "label": "Última Verificação",
+   "read_only": 1
+  },
+  {
+   "fieldname": "proxima_verificacao",
+   "fieldtype": "Date",
+   "label": "Próxima Verificação",
+   "read_only": 1
+  },
+  {
+   "fieldname": "resultado_ultima_verificacao",
+   "fieldtype": "Select",
+   "label": "Resultado da Última Verificação",
+   "options": "\nConforme\nNão Conforme",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_origem",
+   "fieldtype": "Section Break",
+   "label": "Origem"
+  },
+  {
+   "default": "Laboratório",
+   "fieldname": "origem_cadastro",
+   "fieldtype": "Select",
+   "label": "Origem do Cadastro",
+   "options": "Laboratório\nCliente",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cadastrado_por_usuario",
+   "fieldtype": "Link",
+   "label": "Cadastrado por (Portal)",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break",
+   "label": "Observações"
+  },
+  {
+   "fieldname": "observacoes",
+   "fieldtype": "Small Text",
+   "label": "Observações"
+  }
+ ],
+ "image_field": "imagem",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Equipamento Cliente",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "tag,descricao,numero_serie,cliente",
+ "show_title_field_in_link": 0,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "descricao",
+ "track_changes": 1
+}

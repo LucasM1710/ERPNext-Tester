@@ -1,0 +1,50 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "status",
+  "data",
+  "usuario"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Status",
+   "read_only": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "data",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Data",
+   "read_only": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "usuario",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Usuário",
+   "options": "User",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Ordem Servico Metrologia Evento",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

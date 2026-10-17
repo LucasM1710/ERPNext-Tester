@@ -1,0 +1,313 @@
+{
+ "actions": [],
+ "autoname": "field:codigo",
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_id",
+  "codigo",
+  "descricao",
+  "grandeza",
+  "cb_id",
+  "status",
+  "situacao",
+  "responsavel",
+  "sec_tec",
+  "fabricante",
+  "modelo",
+  "numero_serie",
+  "cb_tec",
+  "faixa_medicao",
+  "resolucao",
+  "unidade",
+  "classe_exatidao",
+  "sec_hist",
+  "periodicidade_meses",
+  "calibracoes",
+  "sec_cal",
+  "laboratorio_calibrador",
+  "numero_certificado",
+  "acreditado",
+  "cb_cal",
+  "data_calibracao",
+  "data_validade",
+  "arquivo_certificado",
+  "sec_incerteza",
+  "incerteza_expandida",
+  "fator_k",
+  "correcoes",
+  "sec_obs",
+  "observacoes"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_id",
+   "fieldtype": "Section Break",
+   "label": "Identificação"
+  },
+  {
+   "bold": 1,
+   "fieldname": "codigo",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Código do Padrão",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "descricao",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Descrição",
+   "reqd": 1
+  },
+  {
+   "fieldname": "grandeza",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Grandeza",
+   "options": "\nDimensional\nPressão\nTemperatura\nUmidade\nElétrica\nMassa\nForça\nTorque\nVolume\nVazão\nTempo e Frequência\nÓptica\nOutros"
+  },
+  {
+   "fieldname": "cb_id",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Ativo",
+   "description": "Bloqueado = não pode ser usado (ex.: reprovado ou danificado)",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Ativo\nEm Calibração\nBloqueado\nInativo"
+  },
+  {
+   "fieldname": "situacao",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Situação",
+   "options": "\nEm Dia\nA Vencer\nVencido\nSem Calibração",
+   "read_only": 1
+  },
+  {
+   "fieldname": "responsavel",
+   "fieldtype": "Link",
+   "label": "Responsável",
+   "options": "User"
+  },
+  {
+   "fieldname": "sec_tec",
+   "fieldtype": "Section Break",
+   "label": "Dados Técnicos"
+  },
+  {
+   "fieldname": "fabricante",
+   "fieldtype": "Data",
+   "label": "Fabricante"
+  },
+  {
+   "fieldname": "modelo",
+   "fieldtype": "Data",
+   "label": "Modelo"
+  },
+  {
+   "fieldname": "numero_serie",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Número de Série"
+  },
+  {
+   "fieldname": "cb_tec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "faixa_medicao",
+   "fieldtype": "Data",
+   "label": "Faixa"
+  },
+  {
+   "fieldname": "resolucao",
+   "fieldtype": "Data",
+   "label": "Resolução"
+  },
+  {
+   "fieldname": "unidade",
+   "fieldtype": "Data",
+   "label": "Unidade"
+  },
+  {
+   "fieldname": "classe_exatidao",
+   "fieldtype": "Data",
+   "label": "Classe de Exatidão"
+  },
+  {
+   "description": "Registre cada calibração do padrão. Certificados de clientes guardam a calibração que estava válida na data em que foram emitidos.",
+   "fieldname": "sec_hist",
+   "fieldtype": "Section Break",
+   "label": "Calibrações do Padrão"
+  },
+  {
+   "default": "12",
+   "fieldname": "periodicidade_meses",
+   "fieldtype": "Int",
+   "label": "Periodicidade (meses)"
+  },
+  {
+   "fieldname": "calibracoes",
+   "fieldtype": "Table",
+   "label": "Histórico de Calibrações",
+   "options": "Padrao Calibracao"
+  },
+  {
+   "fieldname": "sec_cal",
+   "fieldtype": "Section Break",
+   "label": "Calibração Vigente"
+  },
+  {
+   "fieldname": "laboratorio_calibrador",
+   "fieldtype": "Data",
+   "label": "Laboratório Calibrador",
+   "read_only": 1
+  },
+  {
+   "fieldname": "numero_certificado",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Nº do Certificado",
+   "read_only": 1
+  },
+  {
+   "fieldname": "acreditado",
+   "fieldtype": "Check",
+   "label": "Acreditado (RBC / ISO 17025)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_cal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "data_calibracao",
+   "fieldtype": "Date",
+   "label": "Data da Calibração",
+   "read_only": 1
+  },
+  {
+   "fieldname": "data_validade",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Válido até",
+   "read_only": 1
+  },
+  {
+   "fieldname": "arquivo_certificado",
+   "fieldtype": "Attach",
+   "label": "Certificado do Padrão (PDF)",
+   "read_only": 1
+  },
+  {
+   "description": "Usadas no cálculo da incerteza dos certificados emitidos com este padrão.",
+   "fieldname": "sec_incerteza",
+   "fieldtype": "Section Break",
+   "label": "Incerteza e Correções"
+  },
+  {
+   "description": "Valor único, quando não houver tabela por ponto",
+   "fieldname": "incerteza_expandida",
+   "fieldtype": "Float",
+   "label": "Incerteza Expandida (U)",
+   "precision": "6"
+  },
+  {
+   "default": "2",
+   "fieldname": "fator_k",
+   "fieldtype": "Float",
+   "label": "Fator de Abrangência (k)",
+   "precision": "3"
+  },
+  {
+   "fieldname": "correcoes",
+   "fieldtype": "Table",
+   "label": "Correções por Ponto",
+   "options": "Padrao Ponto Correcao"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break",
+   "label": "Observações"
+  },
+  {
+   "fieldname": "observacoes",
+   "fieldtype": "Small Text",
+   "label": "Observações"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Rastreabilidade",
+   "is_child_table": 1,
+   "link_doctype": "Certificado Calibracao",
+   "link_fieldname": "padrao",
+   "parent_doctype": "Certificado Calibracao",
+   "table_fieldname": "padroes"
+  }
+ ],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Padrao Metrologia",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "codigo,descricao,numero_serie",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "descricao",
+ "track_changes": 1
+}

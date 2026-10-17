@@ -53,3 +53,7 @@ jspm_packages/
 
 # Aider AI Chat
 .aider*
+
+# Portal do cliente: o build (solucoes/public/portal e solucoes/www/cliente.html) VAI para o git,
+# para o servidor não precisar de build. Só as dependências ficam de fora.
+frontend/node_modules/

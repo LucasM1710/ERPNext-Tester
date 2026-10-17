@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+	--color-brand-50: #eef4ff;
+	--color-brand-100: #dbe6fe;
+	--color-brand-200: #bfd3fe;
+	--color-brand-300: #93b4fd;
+	--color-brand-400: #608dfa;
+	--color-brand-500: #3b67f5;
+	--color-brand-600: #2549ea;
+	--color-brand-700: #1d37d7;
+	--color-brand-800: #1e2fae;
+	--color-brand-900: #1e2e89;
+	--color-brand-950: #0f1a4f;
+
+	--shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+	--shadow-pop: 0 10px 30px -10px rgb(15 23 42 / 0.25);
+}
+
+@layer base {
+	html {
+		-webkit-font-smoothing: antialiased;
+	}
+	body {
+		@apply bg-slate-50 text-slate-800;
+		font-feature-settings: "cv11", "ss01";
+	}
+}
+
+@layer components {
+	.card {
+		@apply rounded-2xl border border-slate-200/80 bg-white shadow-card;
+	}
+	.btn-primary,
+	.btn-secondary,
+	.btn-ghost,
+	.btn-danger,
+	.btn-success {
+		@apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium
+			whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2
+			focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+	.btn-primary {
+		@apply bg-brand-600 text-white shadow-sm hover:bg-brand-700;
+	}
+	.btn-secondary {
+		@apply border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50;
+	}
+	.btn-ghost {
+		@apply text-slate-600 hover:bg-slate-100;
+	}
+	.btn-danger {
+		@apply bg-rose-600 text-white shadow-sm hover:bg-rose-700;
+	}
+	.btn-success {
+		@apply bg-emerald-600 text-white shadow-sm hover:bg-emerald-700;
+	}
+	.input {
+		@apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm
+			placeholder:text-slate-400 focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100;
+	}
+	.label {
+		@apply mb-1.5 block text-xs font-medium text-slate-600;
+	}
+	.th {
+		@apply px-4 py-3 text-left text-[11px] font-semibold tracking-wider text-slate-500 uppercase;
+	}
+	.td {
+		@apply px-4 py-3 text-sm;
+	}
+	.chip {
+		@apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition;
+	}
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.18s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
+.slide-enter-active,
+.slide-leave-active {
+	transition: all 0.2s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+	opacity: 0;
+	transform: translateY(8px) scale(0.98);
+}

@@ -1,0 +1,115 @@
+{
+ "actions": [],
+ "creation": "2026-10-18 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_geral",
+  "titulo_portal",
+  "dias_alerta",
+  "permitir_cadastro_cliente",
+  "permitir_certificado_externo",
+  "sec_padroes",
+  "dias_alerta_padroes",
+  "emails_alerta_padroes",
+  "sec_notificacoes",
+  "enviar_resumo_semanal",
+  "sec_adapter",
+  "adapter"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_geral",
+   "fieldtype": "Section Break",
+   "label": "Geral"
+  },
+  {
+   "default": "Portal do Cliente",
+   "fieldname": "titulo_portal",
+   "fieldtype": "Data",
+   "label": "Título do Portal"
+  },
+  {
+   "default": "30",
+   "fieldname": "dias_alerta",
+   "fieldtype": "Int",
+   "label": "Dias para alerta 'A Vencer'"
+  },
+  {
+   "default": "1",
+   "fieldname": "permitir_cadastro_cliente",
+   "fieldtype": "Check",
+   "label": "Cliente pode cadastrar equipamentos"
+  },
+  {
+   "default": "1",
+   "fieldname": "permitir_certificado_externo",
+   "fieldtype": "Check",
+   "label": "Cliente pode anexar certificados externos"
+  },
+  {
+   "fieldname": "sec_padroes",
+   "fieldtype": "Section Break",
+   "label": "Padrões do Laboratório"
+  },
+  {
+   "default": "45",
+   "fieldname": "dias_alerta_padroes",
+   "fieldtype": "Int",
+   "label": "Dias para alerta de padrão a vencer"
+  },
+  {
+   "description": "Um por linha. Recebem diariamente os padrões vencidos ou a vencer.",
+   "fieldname": "emails_alerta_padroes",
+   "fieldtype": "Small Text",
+   "label": "E-mails para alerta de padrões"
+  },
+  {
+   "fieldname": "sec_notificacoes",
+   "fieldtype": "Section Break",
+   "label": "Notificações do Portal"
+  },
+  {
+   "default": "1",
+   "description": "Cada usuário recebe só o que enxerga: o responsável, os seus distritos; o gestor, o cliente inteiro.",
+   "fieldname": "enviar_resumo_semanal",
+   "fieldtype": "Check",
+   "label": "Enviar resumo semanal de vencimentos por e-mail"
+  },
+  {
+   "description": "Classe Python que fornece os dados ao portal. Troque para usar outros DocTypes (ex.: Equipamentos / Ordem Servico Interna / Externa) sem mudar as telas.",
+   "fieldname": "sec_adapter",
+   "fieldtype": "Section Break",
+   "label": "Fonte de Dados (Adapter)"
+  },
+  {
+   "default": "solucoes.portal.adapters.padrao.AdapterPadrao",
+   "fieldname": "adapter",
+   "fieldtype": "Data",
+   "label": "Adapter"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Configuracao Portal Metrologia",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
