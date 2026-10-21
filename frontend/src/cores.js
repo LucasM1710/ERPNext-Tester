@@ -1,7 +1,9 @@
 // Paleta única usada em badges e gráficos, para que "Vencido" tenha a mesma cor em toda parte.
 export const COR = {
-	brand: "#2549ea",
-	brandClaro: "#93b4fd",
+	brand: "#045a88",
+	brandClaro: "#77bcdd",
+	ciano: "#009bdb",
+	laranja: "#f97316",
 	verde: "#10b981",
 	ambar: "#f59e0b",
 	vermelho: "#f43f5e",
@@ -24,6 +26,7 @@ const TONS = {
 	azul: "bg-brand-50 text-brand-700 ring-brand-600/15",
 	violeta: "bg-violet-50 text-violet-700 ring-violet-600/15",
 	cinza: "bg-slate-100 text-slate-600 ring-slate-500/15",
+	laranja: "bg-orange-50 text-orange-700 ring-orange-600/20",
 }
 
 const TOM_POR_VALOR = {
@@ -56,6 +59,22 @@ const TOM_POR_VALOR = {
 	Terceiro: "violeta",
 	Externo: "violeta",
 	Interno: "azul",
+	// faixas de status de calibração do laboratório (/consulta)
+	Calibrado: "verde",
+	"Alerta 60": "ambar",
+	Crítico: "laranja",
+	Agendado: "azul",
+	"Sem calibração": "cinza",
+	"Nosso Laboratório": "azul",
+	// situação do certificado na fase 1 (pela validade)
+	Vigente: "verde",
+	Anterior: "cinza",
+	// página de consulta (status das OS da empresa vistos pelo cliente)
+	Expedição: "azul",
+	"Pronta para Retirada": "verde",
+	"Orçamento Recusado": "vermelho",
+	"Laboratório": "azul",
+	"In loco": "violeta",
 }
 
 export function classeTom(valor) {
@@ -75,4 +94,14 @@ export const eixoBase = {
 	axisTick: { show: false },
 	axisLabel: { color: COR.texto, fontSize: 11, fontFamily: "Inter" },
 	splitLine: { lineStyle: { color: COR.grade } },
+}
+
+// Cor de cada faixa de status de calibração (gráficos da /consulta).
+export const COR_STATUS = {
+	Calibrado: COR.verde,
+	"Alerta 60": COR.ambar,
+	Crítico: COR.laranja,
+	Vencido: COR.vermelho,
+	Agendado: COR.brand,
+	"Sem calibração": COR.cinza,
 }

@@ -12,6 +12,7 @@ import RegistrarVerificacao from "@/components/RegistrarVerificacao.vue"
 import Vazio from "@/components/Vazio.vue"
 import { COR, COR_SITUACAO, eixoBase, tooltipBase } from "@/cores"
 import { data, dataHora, diasAte, numero, relativo } from "@/format"
+import { BASE, MODO } from "@/modo"
 import { podeEditar, store, toast } from "@/store"
 
 const props = defineProps({ id: String })
@@ -102,7 +103,7 @@ const grafTendencia = computed(() => {
 	}
 })
 
-const linkPublico = computed(() => `${location.origin}/cliente/equipamentos/${props.id}`)
+const linkPublico = computed(() => `${location.origin}${BASE}equipamentos/${props.id}`)
 </script>
 
 <template>
@@ -331,7 +332,7 @@ const linkPublico = computed(() => `${location.origin}/cliente/equipamentos/${pr
 		<EnviarCertificado v-if="enviarCert" :equipamento="e" @fechar="enviarCert = false" @salvo="(enviarCert = false), carregar()" />
 		<Modal v-if="qr" titulo="QR Code do equipamento" subtitulo="Imprima e cole no instrumento: ao escanear, abre esta ficha." largura="max-w-sm" @fechar="qr = false">
 			<div class="flex flex-col items-center gap-3">
-				<img :src="`/api/method/solucoes.api.portal.qrcode?id=${encodeURIComponent(id)}`" class="size-56 rounded-xl border border-slate-100" alt="QR Code" />
+				<img :src="`/api/method/solucoes.api.portal.qrcode?id=${encodeURIComponent(id)}&portal=${MODO}`" class="size-56 rounded-xl border border-slate-100" alt="QR Code" />
 				<p class="text-center text-lg font-semibold text-slate-900">{{ e.tag }}</p>
 				<p class="text-center text-xs break-all text-slate-400">{{ linkPublico }}</p>
 				<button class="btn-secondary" onclick="window.print()">Imprimir</button>

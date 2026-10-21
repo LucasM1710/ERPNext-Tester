@@ -5,6 +5,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "email",
   "usuario",
   "nome_completo",
   "cliente",
@@ -12,17 +13,30 @@
   "perfil",
   "ativo",
   "sec_distritos",
-  "distritos"
+  "distritos",
+  "sec_historico",
+  "ver_historico",
+  "oportunidades"
  ],
  "fields": [
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "options": "Email",
+   "label": "E-mail do usuário",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Se ainda não existir, o usuário do portal é criado ao salvar (usuário de site, sem acesso ao sistema) e recebe o e-mail para definir a senha."
+  },
   {
    "fieldname": "usuario",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Usuário",
    "options": "User",
-   "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir do e-mail."
   },
   {
    "fetch_from": "usuario.full_name",
@@ -30,7 +44,9 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Nome",
-   "read_only": 1
+   "read_only": 0,
+   "fetch_if_empty": 1,
+   "description": "Usado ao criar o usuário; depois vem do cadastro do usuário."
   },
   {
    "fieldname": "cliente",
@@ -47,14 +63,14 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "Responsável",
-   "description": "Gestor: vê todos os distritos e administra usuários. Responsável: vê e opera apenas os seus distritos. Consulta: somente leitura nos seus distritos.",
+   "default": "Líder",
+   "description": "Gestor: vê tudo e administra distritos e equipe. Líder: vê e opera os distritos atribuídos. Usuário: vê somente os equipamentos dos quais é o dono (só leitura).",
    "fieldname": "perfil",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Perfil",
-   "options": "Gestor\nResponsável\nConsulta",
+   "options": "Gestor\nLíder\nUsuário",
    "reqd": 1
   },
   {
@@ -73,13 +89,35 @@
   {
    "fieldname": "distritos",
    "fieldtype": "Table MultiSelect",
-   "label": "Distritos",
-   "options": "Usuario Portal Distrito"
+   "label": "Distritos (Líder)",
+   "options": "Usuario Portal Distrito",
+   "depends_on": "eval:doc.perfil=='Líder'"
+  },
+  {
+   "depends_on": "eval:doc.perfil!='Usuário'",
+   "fieldname": "sec_historico",
+   "fieldtype": "Section Break",
+   "label": "Histórico de atendimento"
+  },
+  {
+   "default": "0",
+   "fieldname": "ver_historico",
+   "fieldtype": "Check",
+   "label": "Habilitar histórico de atendimento",
+   "description": "Gestor ou Líder vê no portal as notas (aba Comentários) das oportunidades escolhidas abaixo — as já escritas e as futuras."
+  },
+  {
+   "fieldname": "oportunidades",
+   "fieldtype": "Table MultiSelect",
+   "label": "Oportunidades liberadas",
+   "options": "Usuario Portal Oportunidade",
+   "depends_on": "eval:doc.ver_historico",
+   "mandatory_depends_on": "eval:doc.ver_historico"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-18 10:00:00.000000",
+ "modified": "2026-10-21 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metrologia",
  "name": "Usuario Portal Cliente",

@@ -10,9 +10,11 @@ import frappe
 from frappe import _
 
 from solucoes.metrologia.periodicidade import sugerir_periodicidade
-from solucoes.portal.adapters import get_adapter
+from solucoes.portal import auditoria, historico
+from solucoes.portal.adapters import get_adapter, modo_portal
 from solucoes.portal.sessao import (
 	GESTOR,
+	USUARIO,
 	clientes_com_distritos,
 	get_contato_do_usuario,
 	get_escopo,
@@ -47,23 +49,32 @@ def contexto():
 	escopo = get_escopo()
 	interno = is_usuario_interno()
 	com_distritos = clientes_com_distritos(escopo[:200])
+	consulta = modo_portal() == "consulta"
+	com_historico = set(historico.liberadas(escopo[:200])) if consulta else set()
+	if not interno:
+		auditoria.registrar_acesso(list(escopo))
 	return {
 		"usuario": {"email": user.name, "nome": user.full_name, "imagem": user.user_image, "interno": interno},
-		"clientes": [_contexto_cliente(escopo, c, c in com_distritos) for c in escopo[:200]],
+		"clientes": [_contexto_cliente(escopo, c, c in com_distritos, consulta, c in com_historico) for c in escopo[:200]],
 		"empresa": frappe.defaults.get_global_default("company"),
+		# Logs: usuários internos e gestores dos clientes.
+		"pode_ver_logs": interno or any(escopo.eh_gestor(c) for c in escopo[:200]),
 		"config": {
 			"titulo": cfg.titulo_portal or "Portal do Cliente",
 			"dias_alerta": cfg.dias_alerta or 30,
+			# /consulta: só leitura (as ações de escrita somem das telas e o adapter recusa).
+			"modo": "consulta" if consulta else "completo",
 			"permitir_cadastro_cliente": bool(cfg.permitir_cadastro_cliente),
 			"permitir_certificado_externo": bool(cfg.permitir_certificado_externo),
 		},
 	}
 
 
-def _contexto_cliente(escopo, cliente, usa_distritos):
+def _contexto_cliente(escopo, cliente, usa_distritos, consulta=False, ver_historico=False):
 	perfil = escopo.perfil(cliente)
 	distritos = []
-	if usa_distritos:
+	# Usuário não navega por distrito: vê os equipamentos dos quais é dono.
+	if usa_distritos and perfil != USUARIO:
 		permitidos = escopo.distritos_de(cliente)
 		filtros = {"cliente": cliente, "ativo": 1}
 		if permitidos is not None:
@@ -77,8 +88,11 @@ def _contexto_cliente(escopo, cliente, usa_distritos):
 		"usa_distritos": usa_distritos,
 		"perfil": perfil,
 		"distritos": distritos,
-		"pode_editar": perfil != "Consulta",
+		# Na /consulta a escrita fica restrita (pelo adapter) aos equipamentos de terceiros.
+		"pode_editar": perfil != USUARIO,
 		"pode_gerenciar": usa_distritos and perfil == GESTOR,
+		# Histórico de atendimento (notas das oportunidades liberadas pela ER)
+		"ver_historico": ver_historico,
 	}
 
 
@@ -152,7 +166,8 @@ def qrcode(id, cliente=None):
 
 	_nao_encontrado(get_adapter().obter_equipamento(resolver_clientes(cliente), id))
 	buffer = BytesIO()
-	create(frappe.utils.get_url(f"/cliente/equipamentos/{id}"), error="M").svg(buffer, scale=8, quiet_zone=2)
+	pagina = "consulta" if modo_portal() == "consulta" else "cliente"
+	create(frappe.utils.get_url(f"/{pagina}/equipamentos/{id}"), error="M").svg(buffer, scale=8, quiet_zone=2)
 	frappe.local.response.update(
 		{
 			"filename": f"{id}.svg",

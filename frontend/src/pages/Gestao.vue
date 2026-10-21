@@ -38,12 +38,19 @@ function corPct(p) {
 // ------------------------------------------------------------ distritos
 const formDistrito = ref(null)
 function editarDistrito(d) {
-	formDistrito.value = d ? { ...d } : { nome: "", descricao: "", ativo: true }
+	formDistrito.value = d ? { ...d } : { nome: "", descricao: "", ativo: true, responsavel_nome: "", responsavel_email: "", uf: "", cidade: "" }
 }
 async function salvarDistrito() {
 	try {
 		const f = formDistrito.value
-		await chamar("salvar_distrito", { id: f.id, nome: f.nome, descricao: f.descricao, ativo: f.ativo ? 1 : 0 }, { post: true })
+		await chamar(
+			"salvar_distrito",
+			{
+				id: f.id, nome: f.nome, descricao: f.descricao, ativo: f.ativo ? 1 : 0,
+				responsavel_nome: f.responsavel_nome, responsavel_email: f.responsavel_email, uf: f.uf, cidade: f.cidade,
+			},
+			{ post: true },
+		)
 		toast(f.id ? "Distrito atualizado." : `Distrito ${f.nome} criado.`)
 		formDistrito.value = null
 		await Promise.all([carregar(), atualizarContexto()])
@@ -78,17 +85,30 @@ async function distribuir() {
 
 // ------------------------------------------------------------ usuários
 const PERFIS = [
-	{ valor: "Gestor", icone: ShieldCheck, texto: "Vê todos os distritos, aprova orçamentos e administra a equipe." },
-	{ valor: "Responsável", icone: UserRound, texto: "Vê e opera somente os distritos atribuídos." },
-	{ valor: "Consulta", icone: Eye, texto: "Somente leitura nos distritos atribuídos (ex.: auditor)." },
+	{ valor: "Gestor", icone: ShieldCheck, texto: "Vê todo o parque, os relatórios e os logs; administra distritos e equipe." },
+	{ valor: "Líder", icone: UserRound, texto: "Vê e opera somente os distritos atribuídos (cadastra terceiros, anota observações)." },
+	{ valor: "Usuário", icone: Eye, texto: "Vê somente os equipamentos sob a sua responsabilidade, só leitura." },
 ]
 const formUsuario = ref(null)
 function editarUsuario(u) {
 	formUsuario.value = reactive(
 		u
-			? { id: u.id, email: u.email, nome: u.nome, perfil: u.perfil, ativo: u.ativo, distritos: new Set(u.distritos.map((d) => d.id)), eu: u.eu }
-			: { email: "", nome: "", perfil: "Responsável", ativo: true, distritos: new Set() },
+			? { id: u.id, email: u.email, nome: u.nome, perfil: u.perfil, ativo: u.ativo, distritos: new Set(u.distritos.map((d) => d.id)), equipamentos: new Set(u.equipamentos || []), eu: u.eu }
+			: { email: "", nome: "", perfil: "Líder", ativo: true, distritos: new Set(), equipamentos: new Set() },
 	)
+	buscaEqp.value = ""
+	if (!parque.value) api("equipamentos", { cliente: cliente.value }).then((l) => (parque.value = l))
+}
+// Perfil Usuário: escolha dos equipamentos sob a responsabilidade dele.
+const parque = ref(null)
+const buscaEqp = ref("")
+const parqueFiltrado = computed(() => {
+	const q = buscaEqp.value.trim().toLowerCase()
+	return (parque.value || []).filter((e) => !q || [e.tag, e.descricao, e.numero_serie, e.distrito_nome].some((v) => String(v || "").toLowerCase().includes(q)))
+})
+function alternarEquipamento(id) {
+	const s = formUsuario.value.equipamentos
+	s.has(id) ? s.delete(id) : s.add(id)
 }
 function alternarDistrito(id) {
 	const s = formUsuario.value.distritos
@@ -96,11 +116,12 @@ function alternarDistrito(id) {
 }
 async function salvarUsuario() {
 	const f = formUsuario.value
-	if (f.perfil !== "Gestor" && !f.distritos.size) return toast("Atribua ao menos um distrito.", "erro")
+	if (f.perfil === "Líder" && !f.distritos.size) return toast("Atribua ao menos um distrito ao Líder.", "erro")
+	if (f.perfil === "Usuário" && !f.equipamentos.size) return toast("Escolha os equipamentos sob a responsabilidade do usuário.", "erro")
 	try {
 		const r = await chamar(
 			"salvar_usuario",
-			{ id: f.id, email: f.email, nome: f.nome, perfil: f.perfil, ativo: f.ativo ? 1 : 0, distritos: [...f.distritos] },
+			{ id: f.id, email: f.email, nome: f.nome, perfil: f.perfil, ativo: f.ativo ? 1 : 0, distritos: [...f.distritos], equipamentos: [...f.equipamentos] },
 			{ post: true },
 		)
 		toast(r.convidado ? `Convite enviado para ${f.email}.` : "Acesso atualizado.")
@@ -166,18 +187,21 @@ const distritosAtivos = computed(() => (dados.value?.distritos || []).filter((d)
 						<div class="flex items-start justify-between gap-2">
 							<div class="min-w-0">
 								<p class="truncate font-semibold text-slate-900">{{ d.nome }}</p>
-								<p class="text-xs text-slate-500">{{ d.ativo ? `${d.usuarios} usuário(s) responsável(is)` : "Inativo" }}</p>
+								<p class="text-xs text-slate-500">{{ d.ativo ? `${d.usuarios} usuário(s) com acesso` : "Inativo" }}</p>
+								<p v-if="d.responsavel_nome || d.cidade" class="mt-1 truncate text-xs text-slate-600">
+									{{ d.responsavel_nome || "Sem responsável" }}<template v-if="d.cidade || d.uf"> · {{ [d.cidade, d.uf].filter(Boolean).join("/") }}</template>
+								</p>
 							</div>
 							<button class="btn-ghost -mt-1 -mr-2 p-1.5" title="Editar" @click="editarDistrito(d)"><Pencil class="size-4" /></button>
 						</div>
 						<div class="mt-4 flex items-end justify-between">
-							<p class="text-3xl font-semibold tabular-nums" :style="{ color: d.total ? corPct(d.em_dia_pct) : COR.cinza }">
-								{{ d.total ? Math.round(d.em_dia_pct) : "—" }}<span v-if="d.total" class="text-base">%</span>
+							<p class="text-3xl font-semibold tabular-nums" :style="{ color: d.total && d.em_dia_pct !== null ? corPct(d.em_dia_pct) : COR.cinza }">
+								{{ d.total && d.em_dia_pct !== null ? Math.round(d.em_dia_pct) : "—" }}<span v-if="d.total && d.em_dia_pct !== null" class="text-base">%</span>
 							</p>
-							<p class="text-xs text-slate-500">em dia</p>
+							<p class="text-xs text-slate-500">{{ d.em_dia_pct === null && d.total ? "sem calibração registrada" : "em dia" }}</p>
 						</div>
 						<div class="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-							<div class="h-full rounded-full" :style="{ width: d.em_dia_pct + '%', background: corPct(d.em_dia_pct) }" />
+							<div class="h-full rounded-full" :style="{ width: (d.em_dia_pct || 0) + '%', background: corPct(d.em_dia_pct) }" />
 						</div>
 						<dl class="mt-4 grid grid-cols-3 gap-2 text-center">
 							<div class="rounded-lg bg-slate-50 py-2"><dt class="text-[11px] text-slate-500">Total</dt><dd class="font-semibold text-slate-900">{{ d.total }}</dd></div>
@@ -219,13 +243,14 @@ const distritosAtivos = computed(() => (dados.value?.distritos || []).filter((d)
 								<td class="td">
 									<span
 										class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold"
-										:class="{ Gestor: 'bg-brand-50 text-brand-700', Responsável: 'bg-emerald-50 text-emerald-700', Consulta: 'bg-slate-100 text-slate-600' }[u.perfil]"
+										:class="{ Gestor: 'bg-brand-50 text-brand-700', Líder: 'bg-emerald-50 text-emerald-700', Usuário: 'bg-slate-100 text-slate-600' }[u.perfil]"
 										>{{ u.perfil }}</span
 									>
 									<span v-if="!u.ativo" class="ml-1 text-xs text-rose-600">desativado</span>
 								</td>
 								<td class="td">
 									<span v-if="u.perfil === 'Gestor'" class="text-xs text-slate-500">Todos</span>
+									<span v-else-if="u.perfil === 'Usuário'" class="text-xs text-slate-500">{{ (u.equipamentos || []).length }} equipamento(s) sob responsabilidade</span>
 									<div v-else class="flex flex-wrap gap-1">
 										<span v-for="d in u.distritos" :key="d.id" class="rounded-md bg-slate-100 px-2 py-0.5 text-xs text-slate-700">{{ d.nome }}</span>
 									</div>
@@ -249,6 +274,24 @@ const distritosAtivos = computed(() => (dados.value?.distritos || []).filter((d)
 				<div>
 					<label class="label">Descrição / endereço</label>
 					<textarea v-model="formDistrito.descricao" rows="2" class="input" />
+				</div>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<div>
+						<label class="label">Responsável (owner)</label>
+						<input v-model="formDistrito.responsavel_nome" class="input" placeholder="Quem responde pelos equipamentos" />
+					</div>
+					<div>
+						<label class="label">E-mail do responsável</label>
+						<input v-model="formDistrito.responsavel_email" type="email" class="input" />
+					</div>
+					<div>
+						<label class="label">Cidade</label>
+						<input v-model="formDistrito.cidade" class="input" />
+					</div>
+					<div>
+						<label class="label">UF</label>
+						<input v-model="formDistrito.uf" maxlength="2" class="input uppercase" placeholder="SP" />
+					</div>
 				</div>
 				<label v-if="formDistrito.id" class="flex items-center gap-2 text-sm text-slate-700">
 					<input v-model="formDistrito.ativo" type="checkbox" class="accent-brand-600" /> Distrito ativo
@@ -318,7 +361,19 @@ const distritosAtivos = computed(() => (dados.value?.distritos || []).filter((d)
 						</label>
 					</div>
 				</div>
-				<div v-if="formUsuario.perfil !== 'Gestor'">
+				<div v-if="formUsuario.perfil === 'Usuário'">
+					<p class="label">Equipamentos sob a responsabilidade dele * <span class="font-normal text-slate-400">({{ formUsuario.equipamentos.size }} selecionado(s))</span></p>
+					<input v-model="buscaEqp" class="input mb-2" placeholder="Buscar por TAG, equipamento, série ou distrito…" />
+					<div class="max-h-60 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200">
+						<p v-if="!parque" class="p-3 text-sm text-slate-500">Carregando…</p>
+						<label v-for="e in parqueFiltrado" :key="e.id" class="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm hover:bg-slate-50">
+							<input type="checkbox" class="accent-brand-600" :checked="formUsuario.equipamentos.has(e.id)" @change="alternarEquipamento(e.id)" />
+							<span class="min-w-0 flex-1 truncate"><b class="font-medium text-slate-900">{{ e.tag }}</b> · {{ e.descricao }}</span>
+							<span class="shrink-0 text-xs text-slate-400">{{ e.distrito_nome || "Sem distrito" }}</span>
+						</label>
+					</div>
+				</div>
+				<div v-if="formUsuario.perfil === 'Líder'">
 					<p class="label">Distritos *</p>
 					<div class="flex flex-wrap gap-2">
 						<button

@@ -3,6 +3,7 @@ import { FileUp, UploadCloud } from "lucide-vue-next"
 import { computed, onMounted, reactive, ref } from "vue"
 import { api } from "@/api"
 import Modal from "@/components/Modal.vue"
+import { CONSULTA } from "@/modo"
 import { store, toast } from "@/store"
 
 // Certificado emitido por OUTRO laboratório, anexado pelo próprio cliente.
@@ -26,7 +27,8 @@ const selecionado = computed(() => equipamentos.value.find((e) => e.id === f.equ
 
 onMounted(async () => {
 	if (!props.equipamento) {
-		equipamentos.value = (await api("equipamentos")).sort((a, b) => (a.calibrado_por === "Terceiro" ? -1 : 1) - (b.calibrado_por === "Terceiro" ? -1 : 1))
+		const lista = await api("equipamentos")
+		equipamentos.value = (CONSULTA ? lista.filter((e) => e.editavel) : lista).sort((a, b) => (a.calibrado_por === "Terceiro" ? -1 : 1) - (b.calibrado_por === "Terceiro" ? -1 : 1))
 	}
 })
 

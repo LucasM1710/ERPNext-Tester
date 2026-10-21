@@ -1,0 +1,12 @@
+<h1 style="font-size:22px;margin:0 0 12px;color:#0f172a">Seu acesso ao Portal do Cliente</h1>
+<p style="font-size:15px;line-height:1.6;margin:0 0 14px">Olá{{ ", " + nome if nome else "" }}!</p>
+<p style="font-size:15px;line-height:1.6;margin:0 0 14px">
+  A ER Analítica liberou o seu acesso ao <b>Portal do Cliente</b>{{ " da " + cliente if cliente else "" }}.
+  Lá você acompanha a validade das calibrações, baixa os certificados em PDF e consulta a rastreabilidade dos padrões.
+</p>
+{% if perfil %}<p style="font-size:14px;line-height:1.6;margin:0 0 20px;padding:12px 14px;background:#eef7fb;border-radius:10px;color:#063e5e">
+  Seu perfil: <b>{{ perfil }}</b> — {{ descricao_perfil }}
+</p>{% endif %}
+<p style="margin:24px 0"><a href="{{ link }}" style="background:#045a88;color:#ffffff;padding:13px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block">Criar minha senha</a></p>
+<p style="font-size:13px;line-height:1.6;color:#64748b;margin:0 0 6px">O link é pessoal e vale por tempo limitado. Se expirar, use “Esqueci minha senha” em <a href="{{ portal }}" style="color:#045a88">{{ portal }}</a>.</p>
+<p style="font-size:13px;line-height:1.6;color:#64748b;margin:0">Seu login é este e-mail: <b>{{ email }}</b></p>

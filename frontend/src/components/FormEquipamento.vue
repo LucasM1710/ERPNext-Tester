@@ -3,6 +3,7 @@ import { computed, reactive, ref } from "vue"
 import { api } from "@/api"
 import Modal from "@/components/Modal.vue"
 import SeletorCliente from "@/components/SeletorCliente.vue"
+import { CONSULTA } from "@/modo"
 import { clienteAtual, infoCliente, precisaEscolherCliente, store, toast } from "@/store"
 
 // Sem `equipamento` = cadastro novo. Com `equipamento` = edição (campos limitados se não foi o cliente que cadastrou).
@@ -67,7 +68,7 @@ async function salvar() {
 <template>
 	<Modal
 		:titulo="novo ? 'Novo equipamento' : `Editar ${equipamento.tag}`"
-		:subtitulo="novo ? 'Cadastre também instrumentos calibrados por outros laboratórios e centralize tudo aqui.' : completo ? '' : 'Equipamento cadastrado pelo laboratório: apenas localização, responsável e status podem ser alterados.'"
+		:subtitulo="novo ? (CONSULTA ? 'Equipamento calibrado por outro laboratório. Depois de salvar, envie o certificado em PDF para manter a situação em dia.' : 'Cadastre também instrumentos calibrados por outros laboratórios e centralize tudo aqui.') : completo ? '' : 'Equipamento cadastrado pelo laboratório: apenas localização, responsável e status podem ser alterados.'"
 		largura="max-w-2xl"
 		@fechar="emit('fechar')"
 	>
@@ -146,7 +147,7 @@ async function salvar() {
 			</fieldset>
 
 			<fieldset v-if="completo" class="grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-2">
-				<div class="sm:col-span-2">
+				<div v-if="!CONSULTA" class="sm:col-span-2">
 					<label class="label">Quem calibra este equipamento?</label>
 					<div class="grid grid-cols-2 gap-2">
 						<label
@@ -180,11 +181,11 @@ async function salvar() {
 					<label class="label">Calibração a cada (meses)</label>
 					<input v-model.number="f.periodicidade_meses" type="number" min="1" class="input" />
 				</div>
-				<div>
+				<div v-if="!CONSULTA">
 					<label class="label">Verificação intermediária a cada (dias)</label>
 					<input v-model.number="f.verificacao_intervalo_dias" type="number" min="1" class="input" placeholder="Não se aplica" />
 				</div>
-				<div>
+				<div v-if="!CONSULTA">
 					<label class="label">Tolerância da verificação (±)</label>
 					<input v-model.number="f.tolerancia_verificacao" type="number" step="any" class="input" :placeholder="f.tolerancia ? `Padrão: ${f.tolerancia}` : ''" />
 				</div>

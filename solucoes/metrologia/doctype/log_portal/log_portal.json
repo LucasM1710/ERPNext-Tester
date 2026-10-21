@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-20 14:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "in_create": 1,
+ "naming_rule": "Random",
+ "module": "Metrologia",
+ "name": "Log Portal",
+ "owner": "Administrator",
+ "modified_by": "Administrator",
+ "modified": "2026-10-20 14:00:00.000000",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "links": [],
+ "description": "Auditoria do portal do cliente: acessos, downloads de certificados e alterações feitas pelos usuários do portal.",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "report": 1,
+   "export": 1,
+   "delete": 1
+  },
+  {
+   "role": "Sales Manager",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Sales User",
+   "read": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "fields": [
+  {
+   "fieldname": "usuario",
+   "fieldtype": "Link",
+   "options": "User",
+   "label": "Usuário",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "options": "Customer",
+   "label": "Cliente",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "acao",
+   "fieldtype": "Data",
+   "label": "Ação",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "referencia_doctype",
+   "fieldtype": "Link",
+   "options": "DocType",
+   "label": "Tipo do registro",
+   "read_only": 1
+  },
+  {
+   "fieldname": "referencia",
+   "fieldtype": "Dynamic Link",
+   "options": "referencia_doctype",
+   "label": "Registro",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "pagina",
+   "fieldtype": "Data",
+   "label": "Página do portal",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_valores",
+   "fieldtype": "Section Break",
+   "label": "Valores"
+  },
+  {
+   "fieldname": "valor_anterior",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "label": "Valor anterior",
+   "read_only": 1
+  },
+  {
+   "fieldname": "valor_novo",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "label": "Valor novo",
+   "read_only": 1
+  }
+ ],
+ "field_order": [
+  "usuario",
+  "cliente",
+  "acao",
+  "column_break_1",
+  "referencia_doctype",
+  "referencia",
+  "pagina",
+  "section_valores",
+  "valor_anterior",
+  "valor_novo"
+ ]
+}

@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "creation": "2026-10-20 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "cliente",
+  "nome_cliente",
+  "usa_controle_distritos"
+ ],
+ "fields": [
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "options": "Customer",
+   "label": "Cliente",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "nome_cliente",
+   "fieldtype": "Data",
+   "label": "Nome do cliente",
+   "fetch_from": "cliente.customer_name",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "usa_controle_distritos",
+   "fieldtype": "Check",
+   "label": "Controle por distritos",
+   "default": "0",
+   "in_list_view": 1,
+   "description": "Equipamentos organizados por distrito; usuários do portal veem apenas os distritos atribuídos (gestores veem todos)."
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-20 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Cliente Portal",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Sales Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Sales User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "field:cliente",
+ "naming_rule": "By fieldname",
+ "title_field": "nome_cliente",
+ "show_title_field_in_link": 1,
+ "search_fields": "nome_cliente",
+ "description": "Configuração do portal por cliente. Fica no app do portal, sem campo novo no Customer."
+}

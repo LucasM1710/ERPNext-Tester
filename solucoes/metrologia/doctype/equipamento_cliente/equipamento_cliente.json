@@ -15,6 +15,7 @@
   "distrito",
   "localizacao",
   "responsavel",
+  "dono",
   "imagem",
   "sec_tecnico",
   "fabricante",
@@ -305,12 +306,20 @@
    "fieldname": "observacoes",
    "fieldtype": "Small Text",
    "label": "Observações"
+  },
+  {
+   "fieldname": "dono",
+   "fieldtype": "Link",
+   "options": "User",
+   "label": "Dono no portal (perfil Usuário)",
+   "description": "Usuário do portal responsável por este equipamento. Com o perfil Usuário, ele só vê os equipamentos dos quais é dono.",
+   "in_standard_filter": 1
   }
  ],
  "image_field": "imagem",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-18 10:00:00.000000",
+ "modified": "2026-10-20 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metrologia",
  "name": "Equipamento Cliente",

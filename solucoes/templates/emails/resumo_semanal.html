@@ -1,0 +1,20 @@
+<h1 style="font-size:22px;margin:0 0 6px;color:#0f172a">Resumo semanal de calibrações</h1>
+<p style="font-size:14px;line-height:1.6;margin:0 0 20px;color:#64748b">{{ cliente or "Seu parque" }} · equipamentos que precisam de atenção (vencidos ou vencendo em até 45 dias).</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px"><tr>
+  <td style="padding:14px;background:#fff1f2;border-radius:12px;text-align:center"><div style="font-size:26px;font-weight:700;color:#be123c">{{ vencidos|length }}</div><div style="font-size:12px;color:#be123c">vencido(s)</div></td>
+  <td style="width:12px"></td>
+  <td style="padding:14px;background:#fff7ed;border-radius:12px;text-align:center"><div style="font-size:26px;font-weight:700;color:#c2410c">{{ criticos|length }}</div><div style="font-size:12px;color:#c2410c">crítico(s) — até 45 dias</div></td>
+</tr></table>
+{% for titulo_lista, lista, cor in [("Vencidos", vencidos, "#be123c"), ("Críticos", criticos, "#c2410c")] if lista %}
+<h3 style="font-size:14px;margin:18px 0 8px;color:{{ cor }}">{{ titulo_lista }}</h3>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:13px">
+  {% for e in lista[:30] %}
+  <tr style="border-top:1px solid #eef2f7">
+    <td style="padding:8px 0"><b>{{ e.tag }}</b> · {{ e.descricao }}<br /><span style="color:#64748b">{{ e.distrito_nome or "Sem distrito" }}{{ " · " + e.owner if e.owner else "" }}</span></td>
+    <td style="padding:8px 0;text-align:right;white-space:nowrap">{{ frappe.utils.formatdate(e.proxima_calibracao, "dd/MM/yyyy") if e.proxima_calibracao else "—" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% if lista|length > 30 %}<p style="color:#64748b;font-size:12px">… e mais {{ lista|length - 30 }} no portal.</p>{% endif %}
+{% endfor %}
+<p style="margin:26px 0 8px"><a href="{{ portal }}" style="background:#045a88;color:#ffffff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600;display:inline-block">Abrir o portal</a></p>

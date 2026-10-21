@@ -8,6 +8,7 @@ import Esqueleto from "@/components/Esqueleto.vue"
 import Etiqueta from "@/components/Etiqueta.vue"
 import Vazio from "@/components/Vazio.vue"
 import { data, exportarCsv } from "@/format"
+import { CONSULTA } from "@/modo"
 import { podeEditar, store } from "@/store"
 
 const route = useRoute()
@@ -18,12 +19,17 @@ const aba = ref(route.query.aba || "todos")
 const busca = ref("")
 const enviar = ref(false)
 
+// Página de consulta: sem análise crítica (fase 2).
 const ABAS = [
 	{ id: "todos", rotulo: "Todos", filtro: () => true },
-	{ id: "pendentes", rotulo: "Análise pendente", filtro: (c) => c.status_analise === "Pendente" },
-	{ id: "reprovados", rotulo: "Reprovados", filtro: (c) => c.resultado === "Reprovado" },
+	!CONSULTA && { id: "pendentes", rotulo: "Análise pendente", filtro: (c) => c.status_analise === "Pendente" },
+	// Fase 1 (/consulta): situação pela validade, sem resultado de medição.
+	CONSULTA
+		? { id: "vencidos", rotulo: "Vencidos", filtro: (c) => c.vigencia === "Vencido" }
+		: { id: "reprovados", rotulo: "Reprovados", filtro: (c) => c.resultado === "Reprovado" },
+	CONSULTA && { id: "vigentes", rotulo: "Vigentes", filtro: (c) => c.vigencia === "Vigente" },
 	{ id: "externos", rotulo: "De terceiros", filtro: (c) => c.origem === "Externo" },
-]
+].filter(Boolean)
 
 async function carregar() {
 	lista.value = await api("certificados")
@@ -52,7 +58,7 @@ function exportar() {
 			{ label: "Validade", valor: (c) => data(c.data_validade) },
 			{ label: "Laboratório", valor: (c) => c.laboratorio },
 			{ label: "Acreditado", valor: (c) => (c.acreditado ? "Sim" : "Não") },
-			{ label: "Resultado", valor: (c) => c.resultado },
+			CONSULTA ? { label: "Situação", valor: (c) => c.vigencia } : { label: "Resultado", valor: (c) => c.resultado },
 			{ label: "Análise crítica", valor: (c) => c.status_analise },
 			{ label: "Analisado por", valor: (c) => c.analisado_por },
 			{ label: "Data análise", valor: (c) => data(c.data_analise) },
@@ -114,8 +120,8 @@ function aoEnviar(cert) {
 							<th class="th">Calibração</th>
 							<th class="th">Validade</th>
 							<th class="th">Laboratório</th>
-							<th class="th">Resultado</th>
-							<th class="th">Análise crítica</th>
+							<th class="th">{{ CONSULTA ? "Situação" : "Resultado" }}</th>
+							<th v-if="!CONSULTA" class="th">Análise crítica</th>
 							<th class="th w-12"></th>
 						</tr>
 					</thead>
@@ -136,8 +142,8 @@ function aoEnviar(cert) {
 									{{ c.laboratorio }} <Award v-if="c.acreditado" class="size-3.5 text-brand-500" title="Acreditado" />
 								</p>
 							</td>
-							<td class="td"><Etiqueta :valor="c.resultado" /></td>
-							<td class="td"><Etiqueta :valor="c.status_analise" :ponto="false" /></td>
+							<td class="td"><Etiqueta :valor="CONSULTA ? c.vigencia : c.resultado" /></td>
+							<td v-if="!CONSULTA" class="td"><Etiqueta :valor="c.status_analise" :ponto="false" /></td>
 							<td class="td" @click.stop>
 								<a v-if="c.tem_arquivo" :href="urlDownloadCertificado(c.id)" class="btn-ghost p-1.5" title="Baixar PDF"><Download class="size-4" /></a>
 							</td>

@@ -70,8 +70,8 @@
    "label": "Notificações do Portal"
   },
   {
-   "default": "1",
-   "description": "Cada usuário recebe só o que enxerga: o responsável, os seus distritos; o gestor, o cliente inteiro.",
+   "default": "0",
+   "description": "Desligado por padrão: ligar só depois de conferir a conta de e-mail de saída (portal@eranalitica.com.br).",
    "fieldname": "enviar_resumo_semanal",
    "fieldtype": "Check",
    "label": "Enviar resumo semanal de vencimentos por e-mail"
@@ -92,7 +92,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-10-18 10:00:00.000000",
+ "modified": "2026-10-21 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metrologia",
  "name": "Configuracao Portal Metrologia",

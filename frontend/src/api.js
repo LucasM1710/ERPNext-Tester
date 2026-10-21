@@ -1,3 +1,4 @@
+import { MODO } from "./modo"
 import { store } from "./store"
 
 const RAIZ = "/api/method/solucoes.api."
@@ -30,7 +31,7 @@ function serializar(params) {
  * Injeta o cliente e o distrito selecionados no topo.
  */
 export async function api(metodo, params = {}, { post = false, form = null } = {}) {
-	const dados = serializar({ cliente: store.cliente, distrito: store.distrito, ...params })
+	const dados = serializar({ cliente: store.cliente, distrito: store.distrito, portal: MODO, ...params })
 	const url = (metodo.includes(".") ? RAIZ : BASE) + metodo
 	let res
 	if (post) {
@@ -53,7 +54,7 @@ export async function api(metodo, params = {}, { post = false, form = null } = {
 	const data = await res.json().catch(() => ({}))
 	if (!res.ok) {
 		if (res.status === 403 && data.exc_type === "PermissionError" && !store.contexto) {
-			window.location.href = "/login?redirect-to=" + encodeURIComponent(location.pathname)
+			window.location.href = "/acesso?redirect-to=" + encodeURIComponent(location.pathname)
 		}
 		throw new Error(mensagemDeErro(data, res.status))
 	}
@@ -61,5 +62,10 @@ export async function api(metodo, params = {}, { post = false, form = null } = {
 }
 
 export function urlDownloadCertificado(id) {
-	return BASE + "baixar_certificado?" + new URLSearchParams(serializar({ id, cliente: store.cliente, distrito: store.distrito }))
+	return BASE + "baixar_certificado?" + new URLSearchParams(serializar({ id, cliente: store.cliente, distrito: store.distrito, portal: MODO }))
+}
+
+/** URL de download (GET) de um método de solucoes.api.<modulo>, com cliente, distrito e página. */
+export function urlApi(metodo, params = {}) {
+	return RAIZ + metodo + "?" + new URLSearchParams(serializar({ cliente: store.cliente, distrito: store.distrito, portal: MODO, ...params }))
 }

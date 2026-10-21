@@ -3,17 +3,24 @@
 O resultado é um `Escopo`: a lista de clientes visíveis (é uma `list`, então os
 adapters podem usá-la diretamente em filtros) acrescida de perfil e distritos.
 
-Controle por distritos é OPCIONAL por cliente (Customer.usa_controle_distritos):
+Controle por distritos é OPCIONAL por cliente (Cliente Portal > Controle por distritos):
 - desativado: todo usuário do cliente vê tudo (comportamento padrão do portal);
-- ativado: o acesso vem de "Usuario Portal Cliente" — Gestor vê todos os distritos,
-  Responsável/Consulta só os distritos atribuídos.
+- ativado: Gestor vê todos os distritos; Líder só os distritos atribuídos.
+
+Perfis (mesmas nomenclaturas do sistema de gestão de equipamentos):
+- Gestor: vê tudo do cliente, administra distritos e equipe, vê logs.
+- Líder: vê e opera os distritos atribuídos (cadastra terceiros, anota observações).
+- Usuário: vê SOMENTE os equipamentos dos quais é o dono (responsável), só leitura.
 """
 
 import frappe
 from frappe import _
 
 PAPEIS_INTERNOS = ("System Manager", "Sales Manager", "Sales User")
-GESTOR, RESPONSAVEL, CONSULTA = "Gestor", "Responsável", "Consulta"
+GESTOR, LIDER, USUARIO = "Gestor", "Líder", "Usuário"
+PERFIS = (GESTOR, LIDER, USUARIO)
+# nomes antigos (mantidos para o código que ainda os importa)
+RESPONSAVEL, CONSULTA = LIDER, USUARIO
 
 
 class Escopo(list):
@@ -26,7 +33,11 @@ class Escopo(list):
 
 	@property
 	def restrito(self) -> bool:
-		return any(self.distritos.get(c) is not None for c in self)
+		return any(self.distritos.get(c) is not None or self.so_proprios(c) for c in self)
+
+	def so_proprios(self, cliente) -> bool:
+		"""Perfil Usuário: só os equipamentos dos quais é o dono."""
+		return self.perfis.get(cliente) == USUARIO
 
 	def perfil(self, cliente) -> str:
 		return self.perfis.get(cliente, GESTOR)
@@ -34,14 +45,22 @@ class Escopo(list):
 	def distritos_de(self, cliente) -> set[str] | None:
 		return self.distritos.get(cliente)
 
-	def pode_ver(self, cliente, distrito=None) -> bool:
+	def pode_ver(self, cliente, distrito=None, dono=None) -> bool:
+		"""Pode ver um equipamento do `cliente`, no `distrito`, cujo dono é `dono`?"""
 		if cliente not in self:
 			return False
+		if self.so_proprios(cliente):
+			return bool(dono) and dono == self.usuario and self._no_distrito(cliente, distrito)
+		return self._no_distrito(cliente, distrito)
+
+	def _no_distrito(self, cliente, distrito) -> bool:
 		permitidos = self.distritos.get(cliente)
 		return permitidos is None or distrito in permitidos
 
-	def pode_editar(self, cliente, distrito=None) -> bool:
-		return self.pode_ver(cliente, distrito) and self.perfil(cliente) != CONSULTA
+	def pode_editar(self, cliente, distrito=None, dono=None) -> bool:
+		if self.perfil(cliente) == USUARIO:
+			return False
+		return self.pode_ver(cliente, distrito, dono)
 
 	def eh_gestor(self, cliente) -> bool:
 		return cliente in self and self.perfil(cliente) == GESTOR
@@ -56,7 +75,7 @@ class Escopo(list):
 		distritos = {c: self.distritos.get(c) for c in clientes}
 		if distrito:
 			dono = frappe.db.get_value("Distrito Cliente", distrito, "cliente")
-			if dono not in clientes or not self.pode_ver(dono, distrito):
+			if dono not in clientes or not self._no_distrito(dono, distrito):
 				raise frappe.PermissionError(_("Você não tem acesso a este distrito."))
 			clientes, distritos = [dono], {dono: {distrito}}
 		return Escopo(clientes, {c: self.perfil(c) for c in clientes}, distritos, self.usuario)
@@ -70,29 +89,24 @@ def clientes_com_distritos(clientes) -> set[str]:
 	if not clientes:
 		return set()
 	return set(
-		frappe.get_all("Customer", filters={"name": ["in", list(clientes)], "usa_controle_distritos": 1}, pluck="name")
+		frappe.get_all(
+			"Cliente Portal", filters={"cliente": ["in", list(clientes)], "usa_controle_distritos": 1}, pluck="cliente"
+		)
 	)
+
+
+def usa_distritos(cliente) -> bool:
+	return bool(cliente and frappe.db.get_value("Cliente Portal", {"cliente": cliente}, "usa_controle_distritos"))
 
 
 def get_clientes_do_usuario(user: str | None = None) -> list[str]:
-	"""Clientes vinculados via Customer > Portal Users, Contact > Links ou Usuario Portal Cliente."""
-	user = user or frappe.session.user
-	via_portal = frappe.get_all("Portal User", filters={"user": user, "parenttype": "Customer"}, pluck="parent")
+	"""Clientes do usuário: SÓ os acessos ativos em "Usuario Portal Cliente".
 
-	contatos = frappe.get_all("Contact", filters={"user": user}, pluck="name")
-	via_contato = (
-		frappe.get_all(
-			"Dynamic Link",
-			filters={"parent": ["in", contatos], "parenttype": "Contact", "link_doctype": "Customer"},
-			pluck="link_name",
-		)
-		if contatos
-		else []
-	)
-	acessos = frappe.get_all("Usuario Portal Cliente", filters={"usuario": user}, fields=["cliente", "ativo"])
-	ativos = {a.cliente for a in acessos if a.ativo}
-	bloqueados = {a.cliente for a in acessos if not a.ativo}
-	return sorted((set(via_portal) | set(via_contato) | ativos) - bloqueados)
+	O acesso é sempre explícito (cadastrado pela empresa ou convidado pelo gestor).
+	Contato ou "Portal Users" do cliente não dão acesso ao portal.
+	"""
+	user = user or frappe.session.user
+	return sorted(set(frappe.get_all("Usuario Portal Cliente", filters={"usuario": user, "ativo": 1}, pluck="cliente")))
 
 
 def get_escopo(user: str | None = None) -> Escopo:
@@ -111,11 +125,10 @@ def get_escopo(user: str | None = None) -> Escopo:
 		fields=["name", "cliente", "perfil"],
 	):
 		perfis[acesso.cliente] = acesso.perfil
-		if acesso.cliente in com_distritos and acesso.perfil != GESTOR:
+		if acesso.cliente in com_distritos and acesso.perfil == LIDER:
 			distritos[acesso.cliente] = set(
 				frappe.get_all("Usuario Portal Distrito", filters={"parent": acesso.name}, pluck="distrito")
 			)
-	# cliente com distritos e usuário sem cadastro de acesso => legado (Portal User/Contato): gestor
 	return Escopo(clientes, perfis, distritos, user)
 
 
@@ -149,6 +162,6 @@ def resolver_escopo_unico(cliente: str | None = None) -> Escopo:
 	escopo = resolver_clientes(cliente)
 	if len(escopo) != 1:
 		frappe.throw(_("Selecione o cliente para esta operação."))
-	if escopo.perfil(escopo[0]) == CONSULTA:
+	if escopo.perfil(escopo[0]) == USUARIO:
 		raise frappe.PermissionError(_("Seu perfil é somente consulta."))
 	return escopo

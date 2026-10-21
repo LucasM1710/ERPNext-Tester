@@ -5,7 +5,7 @@ from frappe import _
 from frappe.utils import getdate, today
 
 from solucoes.portal.adapters.base import Certificado, Equipamento, Ordem, PortalAdapter, como_escopo
-from solucoes.portal.sessao import CONSULTA
+from solucoes.portal.sessao import CONSULTA, usa_distritos
 
 EQP = "Equipamento Cliente"
 CERT = "Certificado Calibracao"
@@ -44,6 +44,10 @@ class AdapterPadrao(PortalAdapter):
 		"""None = sem restrição de distrito; senão, os ids de equipamento visíveis."""
 		if not escopo.restrito:
 			return None
+		proprios = [c for c in escopo if escopo.so_proprios(c)]
+		if proprios:
+			# perfil Usuário: só os equipamentos dos quais é dono
+			return frappe.get_all(EQP, filters={"cliente": ["in", proprios], "dono": escopo.usuario}, pluck="name")
 		livres = [c for c in escopo if escopo.distritos_de(c) is None]
 		distritos = set().union(*(escopo.distritos_de(c) or set() for c in escopo))
 		ids = frappe.get_all(EQP, filters={"cliente": ["in", livres]}, pluck="name") if livres else []
@@ -117,7 +121,7 @@ class AdapterPadrao(PortalAdapter):
 	def _get_eqp_doc(self, clientes, id):
 		escopo = como_escopo(clientes)
 		doc = frappe.get_doc(EQP, id) if frappe.db.exists(EQP, id) else None
-		if not doc or not escopo.pode_ver(doc.cliente, doc.distrito):
+		if not doc or not escopo.pode_ver(doc.cliente, doc.distrito, doc.get("dono")):
 			return None
 		return doc
 
@@ -141,7 +145,7 @@ class AdapterPadrao(PortalAdapter):
 	def _validar_distrito(self, escopo, cliente, doc):
 		"""Cliente com controle por distritos: distrito obrigatório e dentro do que o usuário pode ver."""
 		permitidos = escopo.distritos_de(cliente)
-		if not frappe.db.get_value("Customer", cliente, "usa_controle_distritos"):
+		if not usa_distritos(cliente):
 			return
 		if not doc.distrito and permitidos and len(permitidos) == 1:
 			doc.distrito = next(iter(permitidos))
@@ -159,6 +163,30 @@ class AdapterPadrao(PortalAdapter):
 		self._validar_distrito(escopo, doc.cliente, doc)
 		doc.save(ignore_permissions=True)
 		return self.obter_equipamento(escopo, id)
+
+	def definir_donos(self, cliente, usuario, equipamentos) -> int:
+		equipamentos = set(equipamentos or [])
+		for nome in frappe.get_all(EQP, filters={"cliente": cliente, "dono": usuario}, pluck="name"):
+			if nome not in equipamentos:
+				frappe.db.set_value(EQP, nome, "dono", None)
+		for id in equipamentos:
+			if frappe.db.get_value(EQP, id, "cliente") != cliente:
+				raise frappe.PermissionError
+			frappe.db.set_value(EQP, id, "dono", usuario)
+		return len(equipamentos)
+
+	def atribuir_distrito(self, cliente, distrito, equipamentos) -> int:
+		"""Move equipamentos para um distrito (organização inicial ou transferência). Fica no histórico."""
+		movidos = 0
+		for id in equipamentos:
+			doc = frappe.get_doc(EQP, id)
+			if doc.cliente != cliente:
+				raise frappe.PermissionError
+			if doc.distrito != distrito:
+				doc.distrito = distrito
+				doc.save(ignore_permissions=True)
+				movidos += 1
+		return movidos
 
 	# ================================================================ certificados
 	def _certificado(self, d) -> Certificado:
@@ -325,7 +353,7 @@ class AdapterPadrao(PortalAdapter):
 			frappe.get_all(
 				OS_ITEM,
 				filters={"parent": ["in", [l.name for l in linhas]], "parenttype": OS},
-				fields=["parent", {"COUNT": "*", "as": "qtd"}],
+				fields=["parent", "count(*) as qtd"],
 				group_by="parent",
 				as_list=True,
 			)

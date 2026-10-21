@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Entrar · Portal do Cliente · ER Analítica</title>
+<link rel="icon" type="image/png" href="/assets/solucoes/img/er-favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+	:root { --marca: #045a88; --marca-escura: #063e5e; --ciano: #009bdb; --texto: #0f172a; --suave: #64748b; --borda: #e2e8f0; }
+	* { box-sizing: border-box; }
+	body { margin: 0; font-family: Inter, system-ui, sans-serif; color: var(--texto); background: #f8fafc; -webkit-font-smoothing: antialiased; }
+	.tela { min-height: 100vh; display: grid; grid-template-columns: 1.05fr 1fr; }
+	.marca { position: relative; overflow: hidden; background: linear-gradient(140deg, #052234 0%, var(--marca) 55%, #0a78b3 100%); color: #fff; padding: 56px; display: flex; flex-direction: column; justify-content: space-between; }
+	.marca::before, .marca::after { content: ""; position: absolute; border-radius: 50%; }
+	.marca::before { width: 460px; height: 460px; right: -140px; top: -120px; background: rgba(255,255,255,.06); }
+	.marca::after { width: 520px; height: 520px; left: -160px; bottom: -260px; background: rgba(0,155,219,.18); }
+	.marca > * { position: relative; z-index: 1; }
+	.selo { display: inline-flex; gap: 8px; align-items: center; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+	.marca h1 { font-size: 40px; line-height: 1.12; letter-spacing: -.02em; margin: 28px 0 14px; max-width: 520px; }
+	.marca p.lead { font-size: 16px; color: rgba(255,255,255,.8); max-width: 480px; line-height: 1.6; margin: 0; }
+	.itens { list-style: none; padding: 0; margin: 36px 0 0; display: grid; gap: 14px; max-width: 460px; }
+	.itens li { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: rgba(255,255,255,.88); line-height: 1.5; }
+	.itens li b { color: #fff; }
+	.check { flex: none; width: 22px; height: 22px; border-radius: 50%; background: rgba(94,234,212,.2); display: grid; place-items: center; color: #5eead4; font-size: 13px; }
+	.rodape { font-size: 12px; color: rgba(255,255,255,.55); }
+	.form-lado { display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+	.cartao { width: 100%; max-width: 400px; }
+	.cartao img { height: 64px; margin-bottom: 36px; }
+	.cartao h2 { font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
+	.cartao .sub { color: var(--suave); font-size: 14px; margin: 0 0 28px; }
+	label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin: 0 0 6px; }
+	input { width: 100%; padding: 12px 14px; font: inherit; font-size: 15px; border: 1px solid var(--borda); border-radius: 12px; background: #fff; outline: none; transition: border .15s, box-shadow .15s; }
+	input:focus { border-color: var(--ciano); box-shadow: 0 0 0 4px rgba(0,155,219,.15); }
+	.campo { margin-bottom: 18px; }
+	.linha { display: flex; justify-content: space-between; align-items: baseline; }
+	.linha a { font-size: 13px; color: var(--marca); text-decoration: none; font-weight: 500; }
+	button { width: 100%; padding: 13px; border: 0; border-radius: 12px; font: inherit; font-weight: 600; font-size: 15px; color: #fff; cursor: pointer; background: linear-gradient(135deg, var(--marca), #0a78b3); box-shadow: 0 10px 24px -10px rgba(4,90,136,.6); transition: transform .15s, box-shadow .15s; }
+	button:hover { transform: translateY(-1px); box-shadow: 0 14px 28px -12px rgba(4,90,136,.7); }
+	button:disabled { opacity: .6; cursor: wait; transform: none; }
+	.erro { display: none; margin-bottom: 16px; padding: 11px 14px; border-radius: 12px; background: #fff1f2; color: #be123c; font-size: 13px; border: 1px solid #fecdd3; }
+	.ajuda { margin-top: 28px; font-size: 13px; color: var(--suave); text-align: center; line-height: 1.6; }
+	@media (max-width: 900px) { .tela { grid-template-columns: 1fr; } .marca { display: none; } .cartao img { height: 56px; } }
+</style>
+</head>
+<body>
+<div class="tela">
+	<section class="marca">
+		<div>
+			<span class="selo">● Portal do Cliente</span>
+			<h1>Seus equipamentos calibrados, num só lugar.</h1>
+			<p class="lead">Acompanhe a validade das calibrações, baixe certificados e consulte a rastreabilidade dos padrões — com a confiabilidade de um laboratório de calibração.</p>
+			<ul class="itens">
+				<li><span class="check">✓</span><span><b>Situação do parque</b> — o que está em dia, a vencer e vencido, por distrito.</span></li>
+				<li><span class="check">✓</span><span><b>Certificados em PDF</b> e o histórico de cada equipamento.</span></li>
+				<li><span class="check">✓</span><span><b>Rastreabilidade</b> dos padrões usados em cada calibração.</span></li>
+				<li><span class="check">✓</span><span><b>Ordens de serviço</b> acompanhadas etapa por etapa.</span></li>
+			</ul>
+		</div>
+		<p class="rodape">ER Analítica · Calibração e assistência técnica</p>
+	</section>
+
+	<section class="form-lado">
+		<div class="cartao">
+			<img src="/assets/solucoes/img/er-analitica.png" alt="ER Analítica" />
+			<h2>Entrar no portal</h2>
+			<p class="sub">Use o e-mail cadastrado pela ER Analítica ou pelo gestor da sua empresa.</p>
+			<div class="erro" id="erro"></div>
+			<form id="form" autocomplete="on">
+				<div class="campo">
+					<label for="usr">E-mail</label>
+					<input id="usr" name="usr" type="email" required autofocus autocomplete="username" placeholder="voce@empresa.com.br" />
+				</div>
+				<div class="campo">
+					<div class="linha"><label for="pwd">Senha</label><a href="#" id="esqueci">Esqueci minha senha</a></div>
+					<input id="pwd" name="pwd" type="password" required autocomplete="current-password" placeholder="••••••••" />
+				</div>
+				<button id="entrar" type="submit">Entrar</button>
+			</form>
+			<div id="recuperar" style="display:none;margin-top:22px;padding:16px;border:1px solid var(--borda);border-radius:14px;background:#fff">
+				<p style="margin:0 0 10px;font-size:14px;font-weight:600">Receber link para nova senha</p>
+				<input id="email_rec" type="email" placeholder="seu e-mail cadastrado" />
+				<button id="enviar_rec" type="button" style="margin-top:10px">Enviar link</button>
+				<p id="msg_rec" style="display:none;margin:12px 0 0;font-size:13px;color:#047857"></p>
+			</div>
+			<p class="ajuda">Primeiro acesso? Use o link do e-mail de convite para criar sua senha.<br />Dúvidas: fale com o atendimento da ER Analítica.</p>
+		</div>
+	</section>
+</div>
+<script>
+	const form = document.getElementById("form"), erro = document.getElementById("erro"), botao = document.getElementById("entrar")
+	const destino = new URLSearchParams(location.search).get("redirect-to") || "/consulta"
+	const painel = document.getElementById("recuperar"), msgRec = document.getElementById("msg_rec")
+	document.getElementById("esqueci").addEventListener("click", (ev) => {
+		ev.preventDefault()
+		painel.style.display = "block"
+		document.getElementById("email_rec").value = form.usr.value
+		document.getElementById("email_rec").focus()
+	})
+	document.getElementById("enviar_rec").addEventListener("click", async () => {
+		const email = document.getElementById("email_rec").value.trim()
+		if (!email) return
+		const r = await fetch("/api/method/solucoes.api.acesso.recuperar_senha", {
+			method: "POST",
+			headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" },
+			body: new URLSearchParams({ email }),
+		})
+		const d = await r.json().catch(() => ({}))
+		msgRec.textContent = r.status === 429 ? "Muitas tentativas. Aguarde alguns minutos." : d.message || "Pedido recebido."
+		msgRec.style.display = "block"
+	})
+	form.addEventListener("submit", async (ev) => {
+		ev.preventDefault()
+		erro.style.display = "none"
+		botao.disabled = true
+		botao.textContent = "Entrando…"
+		try {
+			const r = await fetch("/api/method/login", {
+				method: "POST",
+				headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" },
+				body: new URLSearchParams({ usr: form.usr.value.trim(), pwd: form.pwd.value }),
+			})
+			if (!r.ok) throw new Error(r.status === 401 ? "E-mail ou senha incorretos." : "Não foi possível entrar agora. Tente novamente.")
+			const d = await r.json()
+			// Usuário do portal vai para o portal; usuário interno da ER, para o sistema.
+			location.href = destino !== "/consulta" ? destino : (d.home_page && d.home_page !== "/app" && d.home_page !== "/desk" ? "/" + String(d.home_page).replace(/^\/+/, "") : "/app")
+		} catch (e) {
+			erro.textContent = e.message
+			erro.style.display = "block"
+			botao.disabled = false
+			botao.textContent = "Entrar"
+		}
+	})
+</script>
+</body>
+</html>

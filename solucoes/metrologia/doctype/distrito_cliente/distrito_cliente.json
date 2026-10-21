@@ -9,7 +9,13 @@
   "nome_distrito",
   "cb_1",
   "ativo",
-  "descricao"
+  "descricao",
+  "section_responsavel",
+  "responsavel_nome",
+  "responsavel_email",
+  "column_break_local",
+  "uf",
+  "cidade"
  ],
  "fields": [
   {
@@ -46,11 +52,46 @@
    "fieldname": "descricao",
    "fieldtype": "Small Text",
    "label": "Descrição / Endereço"
+  },
+  {
+   "fieldname": "section_responsavel",
+   "fieldtype": "Section Break",
+   "label": "Responsável e localização"
+  },
+  {
+   "fieldname": "responsavel_nome",
+   "fieldtype": "Data",
+   "label": "Responsável (owner)",
+   "in_list_view": 1,
+   "description": "Quem responde pelos equipamentos deste distrito. Aparece como \"Owner\" no portal."
+  },
+  {
+   "fieldname": "responsavel_email",
+   "fieldtype": "Data",
+   "options": "Email",
+   "label": "E-mail do responsável"
+  },
+  {
+   "fieldname": "column_break_local",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "uf",
+   "fieldtype": "Data",
+   "label": "UF",
+   "length": 2,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "cidade",
+   "fieldtype": "Data",
+   "label": "Cidade",
+   "in_list_view": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-10-18 10:00:00.000000",
+ "modified": "2026-10-20 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metrologia",
  "name": "Distrito Cliente",

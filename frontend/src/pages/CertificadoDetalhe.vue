@@ -1,12 +1,13 @@
 <script setup>
 import { ArrowLeft, Award, CircleCheck, CircleX, Download, ShieldCheck, ThumbsDown, ThumbsUp } from "lucide-vue-next"
 import { computed, onMounted, ref } from "vue"
-import { api, urlDownloadCertificado } from "@/api"
+import { api, urlApi, urlDownloadCertificado } from "@/api"
 import Esqueleto from "@/components/Esqueleto.vue"
 import Etiqueta from "@/components/Etiqueta.vue"
 import Grafico from "@/components/Grafico.vue"
 import { COR, eixoBase, tooltipBase } from "@/cores"
 import { data, dataHora, numero } from "@/format"
+import { CONSULTA } from "@/modo"
 import { podeEditar, toast } from "@/store"
 
 const props = defineProps({ id: String })
@@ -36,6 +37,8 @@ async function analisar(status) {
 	}
 }
 
+// Fase 1 (/consulta): situação pela validade; resultado de medição é da fase 2.
+const situacao = computed(() => (CONSULTA ? c.value?.vigencia : c.value?.resultado))
 const temCriterio = computed(() => c.value?.pontos.some((p) => p.tolerancia))
 
 // Gráfico de calibração: erro de cada ponto com barra de incerteza (±U), dentro da faixa de tolerância.
@@ -129,15 +132,15 @@ const grafPontos = computed(() => {
 			<div class="card flex flex-wrap items-center gap-5 p-6">
 				<span
 					class="grid size-14 shrink-0 place-items-center rounded-2xl"
-					:class="c.resultado === 'Reprovado' ? 'bg-rose-50 text-rose-600' : c.resultado === 'Aprovado' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'"
+					:class="situacao === 'Reprovado' || situacao === 'Vencido' ? 'bg-rose-50 text-rose-600' : situacao === 'Aprovado' || situacao === 'Vigente' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'"
 				>
-					<CircleX v-if="c.resultado === 'Reprovado'" class="size-7" />
+					<CircleX v-if="situacao === 'Reprovado' || situacao === 'Vencido'" class="size-7" />
 					<CircleCheck v-else class="size-7" />
 				</span>
 				<div class="min-w-0 flex-1">
 					<div class="flex flex-wrap items-center gap-2">
 						<h1 class="text-2xl font-semibold tracking-tight text-slate-900">{{ c.numero }}</h1>
-						<Etiqueta :valor="c.resultado" />
+						<Etiqueta :valor="situacao" />
 						<Etiqueta v-if="c.origem === 'Externo'" valor="Externo" :ponto="false">Emitido por terceiro</Etiqueta>
 					</div>
 					<RouterLink :to="`/equipamentos/${c.equipamento_id}`" class="mt-1 inline-block text-slate-600 hover:text-brand-700">
@@ -150,7 +153,27 @@ const grafPontos = computed(() => {
 
 			<div class="grid gap-6 lg:grid-cols-3">
 				<div class="space-y-6 lg:col-span-2">
-					<section class="card p-6">
+					<!-- Fase 1: rastreabilidade em destaque (os resultados de medição ficam no PDF) -->
+					<section v-if="CONSULTA" class="card p-6">
+						<h2 class="flex items-center gap-2 font-semibold text-slate-900"><ShieldCheck class="size-4 text-brand-600" /> Rastreabilidade — padrões utilizados</h2>
+						<p class="text-xs text-slate-500">Padrões de referência usados nesta calibração. Os resultados das medições estão no PDF do certificado.</p>
+						<p v-if="!c.padroes?.length" class="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">
+							{{ c.origem === "Externo" ? "Certificado de outro laboratório: a rastreabilidade consta no PDF." : "Nenhum padrão registrado para esta calibração." }}
+						</p>
+						<ul v-else class="mt-4 grid gap-3 sm:grid-cols-2">
+							<li v-for="p in c.padroes" :key="p.linha || p.codigo" class="flex items-start justify-between gap-3 rounded-xl border border-slate-100 p-3.5">
+								<div class="min-w-0">
+									<p class="text-sm font-semibold text-slate-900">{{ p.codigo }}</p>
+									<p class="text-xs text-slate-500">{{ p.descricao }}</p>
+									<p class="mt-1 text-xs text-slate-600">Cert. {{ p.numero_certificado || "—" }} · válido até {{ data(p.validade) }}</p>
+								</div>
+								<a v-if="p.tem_arquivo" :href="urlApi('consulta.baixar_certificado_padrao', { os: c.id, linha: p.linha })" target="_blank" class="btn-secondary shrink-0 px-2.5 py-1 text-xs">
+									<Download class="size-3.5" /> PDF
+								</a>
+							</li>
+						</ul>
+					</section>
+					<section v-if="!CONSULTA" class="card p-6">
 						<h2 class="font-semibold text-slate-900">Resultados da calibração</h2>
 						<p class="text-xs text-slate-500">
 							Critério: o ponto é conforme quando |erro| + U ≤ tolerância. Área verde = faixa aceitável.
@@ -159,7 +182,7 @@ const grafPontos = computed(() => {
 						<p v-else class="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-500">Este certificado não possui pontos de medição registrados no portal. Consulte o PDF.</p>
 					</section>
 
-					<section v-if="c.pontos.length" class="card overflow-hidden">
+					<section v-if="!CONSULTA && c.pontos.length" class="card overflow-hidden">
 						<div class="overflow-x-auto">
 							<table class="w-full min-w-[620px]">
 								<thead class="border-b border-slate-100 bg-slate-50/60">
@@ -194,7 +217,7 @@ const grafPontos = computed(() => {
 
 				<div class="space-y-6">
 					<!-- Análise crítica -->
-					<section class="card p-6">
+					<section v-if="!CONSULTA" class="card p-6">
 						<h2 class="flex items-center gap-2 font-semibold text-slate-900"><ShieldCheck class="size-4 text-brand-600" /> Análise crítica</h2>
 						<p class="mt-1 text-xs text-slate-500">Registro exigido pela ISO 9001 / IATF 16949: o cliente avalia se o equipamento atende ao uso pretendido.</p>
 
@@ -221,6 +244,7 @@ const grafPontos = computed(() => {
 						<h2 class="font-semibold text-slate-900">Dados do certificado</h2>
 						<dl class="mt-3 divide-y divide-slate-100 text-sm">
 							<div class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Data da calibração</dt><dd class="font-medium">{{ data(c.data_calibracao) }}</dd></div>
+							<div v-if="CONSULTA" class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Situação</dt><dd><Etiqueta :valor="c.vigencia" /></dd></div>
 							<div class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Válido até</dt><dd class="font-medium">{{ data(c.data_validade) }}</dd></div>
 							<div class="flex justify-between gap-4 py-2.5">
 								<dt class="text-slate-500">Laboratório</dt>
@@ -228,21 +252,32 @@ const grafPontos = computed(() => {
 							</div>
 							<div class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Acreditação</dt><dd class="font-medium">{{ c.acreditado ? "RBC / ISO/IEC 17025" : "Rastreável" }}</dd></div>
 							<div v-if="c.tecnico" class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Técnico</dt><dd class="font-medium">{{ c.tecnico }}</dd></div>
-							<div class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Ajustado</dt><dd class="font-medium">{{ c.ajustado ? "Sim" : "Não" }}</dd></div>
+							<div v-if="!CONSULTA" class="flex justify-between gap-4 py-2.5"><dt class="text-slate-500">Ajustado</dt><dd class="font-medium">{{ c.ajustado ? "Sim" : "Não" }}</dd></div>
 						</dl>
-						<div v-if="c.padroes?.length" class="mt-4">
+						<div v-if="!CONSULTA && c.padroes?.length" class="mt-4">
 							<p class="text-xs font-medium text-slate-500">Rastreabilidade — padrões utilizados</p>
 							<ul class="mt-2 space-y-2">
-								<li v-for="p in c.padroes" :key="p.codigo" class="rounded-xl border border-slate-100 p-3">
-									<p class="flex items-center gap-1.5 text-sm font-medium text-slate-900">
-										{{ p.codigo }} <Award v-if="p.acreditado" class="size-3.5 text-brand-500" />
-									</p>
-									<p class="text-xs text-slate-500">{{ p.descricao }}</p>
-									<p class="mt-1 text-xs text-slate-600">Cert. {{ p.numero_certificado }} · {{ p.laboratorio }} · válido até {{ data(p.validade) }}</p>
+								<li v-for="p in c.padroes" :key="p.linha || p.codigo" class="flex items-start justify-between gap-3 rounded-xl border border-slate-100 p-3">
+									<div class="min-w-0">
+										<p class="flex items-center gap-1.5 text-sm font-medium text-slate-900">
+											{{ p.codigo }} <Award v-if="p.acreditado" class="size-3.5 text-brand-500" />
+										</p>
+										<p class="text-xs text-slate-500">{{ p.descricao }}</p>
+										<p class="mt-1 text-xs text-slate-600">{{ ["Cert. " + (p.numero_certificado || "—"), p.laboratorio, "válido até " + data(p.validade)].filter(Boolean).join(" · ") }}</p>
+									</div>
+									<a
+										v-if="CONSULTA && p.tem_arquivo"
+										:href="urlApi('consulta.baixar_certificado_padrao', { os: c.id, linha: p.linha })"
+										target="_blank"
+										class="btn-secondary shrink-0 px-2.5 py-1 text-xs"
+										title="Certificado de calibração do padrão"
+									>
+										<Download class="size-3.5" /> PDF
+									</a>
 								</li>
 							</ul>
 						</div>
-						<div v-else-if="c.padroes_utilizados" class="mt-3 rounded-xl bg-slate-50 p-3">
+						<div v-else-if="!CONSULTA && c.padroes_utilizados" class="mt-3 rounded-xl bg-slate-50 p-3">
 							<p class="text-xs font-medium text-slate-500">Padrões / rastreabilidade</p>
 							<p class="mt-1 text-sm whitespace-pre-line text-slate-700">{{ c.padroes_utilizados }}</p>
 						</div>

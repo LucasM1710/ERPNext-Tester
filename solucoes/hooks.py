@@ -70,11 +70,16 @@ app_license = "mit"
 # home_page = "login"
 
 # website user home page (by Role)
-role_home_page = {"Customer": "cliente"}
+# Página inicial do cliente: a de consulta (dados reais da empresa). /cliente segue acessível pelo endereço.
+role_home_page = {"Customer": "consulta"}
+# O Builder também define a página inicial de usuários de site (e tem prioridade);
+# este gancho manda os usuários do portal para /consulta e devolve os demais ao Builder.
+get_website_user_home_page = "solucoes.portal.pagina_inicial.pagina_inicial"
 
 # Portal do Cliente (SPA Vue): todas as sub-rotas de /cliente servem a mesma página
 website_route_rules = [
 	{"from_route": "/cliente/<path:app_path>", "to_route": "cliente"},
+	{"from_route": "/consulta/<path:app_path>", "to_route": "consulta"},
 ]
 
 # Generators
@@ -290,3 +295,9 @@ scheduler_events = {
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+# Atalhos do ERP para a central do portal (não altera o doctype; só um botão no formulário)
+doctype_js = {"Customer": "public/js/customer_portal.js"}
+
+# Conexões do Cliente: seção "Portal do cliente" (acesso, distritos, usuários, equipamentos, logs)
+override_doctype_dashboards = {"Customer": "solucoes.portal.conexoes.customer_dashboard"}

@@ -1,0 +1,108 @@
+{
+ "actions": [],
+ "creation": "2026-10-20 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "equipamento_doctype",
+  "equipamento",
+  "cliente",
+  "distrito",
+  "dono",
+  "observacao"
+ ],
+ "fields": [
+  {
+   "fieldname": "equipamento_doctype",
+   "fieldtype": "Link",
+   "options": "DocType",
+   "label": "Tipo do equipamento",
+   "reqd": 1,
+   "default": "Equipamentos",
+   "hidden": 1
+  },
+  {
+   "fieldname": "equipamento",
+   "fieldtype": "Dynamic Link",
+   "options": "equipamento_doctype",
+   "label": "Equipamento",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "O cliente é preenchido pelo equipamento."
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "options": "Customer",
+   "label": "Cliente",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only_depends_on": "eval:doc.equipamento"
+  },
+  {
+   "fieldname": "distrito",
+   "fieldtype": "Link",
+   "options": "Distrito Cliente",
+   "label": "Distrito",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "observacao",
+   "fieldtype": "Small Text",
+   "label": "Observação do cliente",
+   "description": "Anotação do cliente sobre o equipamento (aparece na coluna Obs. do portal)."
+  },
+  {
+   "fieldname": "dono",
+   "fieldtype": "Link",
+   "options": "User",
+   "label": "Dono no portal (perfil Usuário)",
+   "description": "Usuário do portal responsável por este equipamento. Com o perfil Usuário, ele só vê os equipamentos dos quais é dono.",
+   "in_standard_filter": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-21 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metrologia",
+ "name": "Distrito Equipamento",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Sales Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Sales User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "hash",
+ "naming_rule": "Random",
+ "description": "Dados do cliente sobre um equipamento do laboratório (distrito e observação), sem campo novo no equipamento."
+}

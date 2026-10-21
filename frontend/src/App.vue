@@ -1,16 +1,21 @@
 <script setup>
 import {
+	BookOpen,
 	Building2,
 	ChevronDown,
 	CircleAlert,
 	CircleCheck,
 	ClipboardList,
 	FileCheck2,
+	FileSpreadsheet,
+	Workflow,
+	ScrollText,
 	Gauge,
 	LayoutDashboard,
 	Eye,
 	LogOut,
 	MapPin,
+	MessagesSquare,
 	Menu,
 	MonitorCog,
 	Plus,
@@ -18,11 +23,15 @@ import {
 	X,
 } from "lucide-vue-next"
 import { computed, onMounted, ref, watch } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import { api } from "./api"
+import { BASE, CONSULTA } from "./modo"
 import { clienteAtual, definirCliente, definirDistrito, podeEditar, store } from "./store"
 
+// Servido pelo Frappe (apps/solucoes/solucoes/public/img), fora do build do Vite.
+const LOGO = "/assets/solucoes/img/er-analitica.png"
 const route = useRoute()
+const router = useRouter()
 const erro = ref(null)
 const menuAberto = ref(false)
 const menuUsuario = ref(false)
@@ -34,15 +43,44 @@ const NAV = [
 	{ nome: "ordens", rotulo: "Ordens de Serviço", icone: ClipboardList, rota: "/ordens" },
 ]
 
-const nav = computed(() =>
-	store.contexto?.clientes.some((c) => c.pode_gerenciar)
-		? [...NAV, { nome: "gestao", rotulo: "Distritos e equipe", icone: UsersRound, rota: "/gestao" }]
-		: NAV,
+// /consulta: menu da gestão do parque (Relatórios para todos; Logs só gestor/interno).
+const NAV_CONSULTA = [
+	{ nome: "painel", rotulo: "Visão operacional", icone: LayoutDashboard, rota: "/" },
+	{ nome: "equipamentos", rotulo: "Equipamentos", icone: Gauge, rota: "/equipamentos" },
+	{ nome: "certificados", rotulo: "Certificados", icone: FileCheck2, rota: "/certificados" },
+	{ nome: "ordens", rotulo: "Ordens de Serviço", icone: ClipboardList, rota: "/ordens" },
+	{ nome: "relatorios", rotulo: "Relatórios", icone: FileSpreadsheet, rota: "/relatorios" },
+]
+
+// Perfil Usuário (em todos os clientes): só Equipamentos, Certificados e Ordens.
+const soUsuario = computed(() => !!store.contexto?.clientes.length && store.contexto.clientes.every((c) => c.perfil === "Usuário"))
+// Usuário entra direto em Equipamentos (sem visão operacional nem relatórios).
+watch(
+	() => [soUsuario.value, route.path],
+	([so, caminho]) => {
+		if (CONSULTA && so && ["/", "/relatorios", "/logs"].includes(caminho)) router.replace("/equipamentos")
+	},
+	{ immediate: true },
 )
+
+const nav = computed(() => {
+	const base = CONSULTA ? NAV_CONSULTA.filter((i) => !soUsuario.value || !["painel", "relatorios"].includes(i.nome)) : [...NAV]
+	// Histórico de atendimento: só Gestor/Líder com oportunidades liberadas pela ER
+	if (CONSULTA && store.contexto?.clientes.some((c) => c.ver_historico))
+		base.push({ nome: "historico", rotulo: "Histórico de atendimento", icone: MessagesSquare, rota: "/historico" })
+	if (CONSULTA && store.contexto?.pode_ver_logs) base.push({ nome: "logs", rotulo: "Logs de auditoria", icone: ScrollText, rota: "/logs" })
+	if (store.contexto?.clientes.some((c) => c.pode_gerenciar)) base.push({ nome: "gestao", rotulo: "Distritos e equipe", icone: UsersRound, rota: "/gestao" })
+	// Triagem da ER (só usuários internos)
+	if (CONSULTA && store.contexto?.usuario.interno) base.push({ nome: "central", rotulo: "Central do portal", icone: Workflow, rota: "/central" })
+	// Manual (parte do cliente para todos; parte da ER só para internos)
+	if (CONSULTA) base.push({ nome: "manual", rotulo: "Manual", icone: BookOpen, rota: "/manual" })
+	return base
+})
 
 // Seletor de distrito: só para cliente com controle por distritos e mais de um distrito visível
 const distritosDoCliente = computed(() => clienteAtual()?.distritos || [])
-const mostrarDistritos = computed(() => clienteAtual()?.usa_distritos && distritosDoCliente.value.length > 1)
+// Com filtro de distrito ativo o seletor sempre aparece, para dar para voltar a "Todos".
+const mostrarDistritos = computed(() => clienteAtual()?.usa_distritos && (distritosDoCliente.value.length > 1 || (store.distrito && distritosDoCliente.value.length)))
 const somenteConsulta = computed(() => store.contexto && !podeEditar())
 
 function ativo(item) {
@@ -69,7 +107,7 @@ watch(
 
 async function sair() {
 	await fetch("/api/method/logout", { method: "POST", headers: { "X-Frappe-CSRF-Token": window.csrf_token } })
-	window.location.href = "/login"
+	window.location.href = CONSULTA ? "/acesso" : "/login"
 }
 
 onMounted(async () => {
@@ -94,7 +132,7 @@ onMounted(async () => {
 			<CircleAlert class="mx-auto mb-3 size-10 text-rose-500" />
 			<p class="font-semibold text-slate-900">Não foi possível abrir o portal</p>
 			<p class="mt-1 text-sm text-slate-500">{{ erro }}</p>
-			<a href="/login?redirect-to=/cliente" class="btn-primary mt-5">Entrar com outro usuário</a>
+			<a :href="`/acesso?redirect-to=${BASE}`" class="btn-primary mt-5">Entrar com outro usuário</a>
 		</div>
 	</div>
 
@@ -108,41 +146,41 @@ onMounted(async () => {
 			<div v-if="menuAberto" class="fixed inset-0 z-30 bg-slate-900/40 lg:hidden" @click="menuAberto = false" />
 		</Transition>
 		<aside
-			class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-slate-950 text-slate-300 transition-transform lg:translate-x-0"
+			class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200/80 bg-white text-slate-600 transition-transform lg:translate-x-0"
 			:class="menuAberto ? 'translate-x-0' : '-translate-x-full'"
 		>
-			<div class="flex h-16 items-center gap-3 px-5">
-				<div class="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 shadow-lg shadow-brand-900/40">
-					<Gauge class="size-5 text-white" />
-				</div>
-				<div class="min-w-0 leading-tight">
-					<p class="truncate text-sm font-semibold text-white">{{ store.contexto.config.titulo }}</p>
-					<p class="truncate text-[11px] text-slate-400">{{ store.contexto.empresa }}</p>
-				</div>
+			<div class="flex items-center gap-3 px-6 pt-6 pb-4">
+				<img :src="LOGO" alt="ER Analítica" class="h-11 w-auto" />
 				<button class="ml-auto p-1 text-slate-400 lg:hidden" aria-label="Fechar menu" @click="menuAberto = false">
 					<X class="size-5" />
 				</button>
 			</div>
 
-			<nav class="mt-4 flex-1 space-y-1 px-3">
-				<p class="px-3 pb-2 text-[10px] font-semibold tracking-widest text-slate-500 uppercase">Menu</p>
+			<p class="mx-6 mb-3 rounded-lg bg-brand-50 px-3 py-1.5 text-[11px] font-semibold tracking-wide text-brand-700">{{ store.contexto.config.titulo }}</p>
+			<nav class="flex-1 space-y-0.5 px-3">
+				<p class="px-3 pb-2 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">Menu</p>
 				<RouterLink
 					v-for="item in nav"
 					:key="item.nome"
 					:to="item.rota"
-					class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition"
-					:class="ativo(item) ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white'"
+					class="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition"
+					:class="ativo(item) ? 'bg-brand-50 text-brand-800' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
 				>
+					<span v-if="ativo(item)" class="absolute top-2 bottom-2 -left-3 w-1 rounded-r-full bg-brand-600" />
 					<component
 						:is="item.icone"
 						class="size-[18px]"
-						:class="ativo(item) ? 'text-brand-300' : 'text-slate-500 group-hover:text-slate-300'"
+						:class="ativo(item) ? 'text-brand-600' : 'text-slate-400 group-hover:text-slate-600'"
 					/>
 					{{ item.rotulo }}
 				</RouterLink>
 			</nav>
 
-			<div v-if="!somenteConsulta" class="m-3 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 p-4 text-white">
+			<div v-if="CONSULTA" class="m-4 rounded-2xl bg-gradient-to-br from-brand-700 to-brand-500 p-4 text-white">
+				<p class="text-xs font-semibold tracking-wide text-white/80 uppercase">Laboratório de calibração</p>
+				<p class="mt-1 text-sm leading-snug">Certificados, rastreabilidade e prazos do seu parque num só lugar.</p>
+			</div>
+			<div v-if="!somenteConsulta && !CONSULTA" class="m-3 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 p-4 text-white">
 				<p class="text-sm font-semibold">Precisa calibrar?</p>
 				<p class="mt-1 text-xs text-brand-100">Solicite coleta ou atendimento in loco em poucos cliques.</p>
 				<RouterLink to="/solicitar" class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-50">
@@ -184,7 +222,7 @@ onMounted(async () => {
 				<ChevronDown class="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-brand-400" />
 			</div>
 			<span
-				v-else-if="clienteAtual()?.usa_distritos && distritosDoCliente.length === 1"
+				v-else-if="clienteAtual()?.usa_distritos && distritosDoCliente.length === 1 && !store.distrito"
 				class="hidden items-center gap-1.5 rounded-lg bg-brand-50 px-2.5 py-1 text-sm font-medium text-brand-800 sm:inline-flex"
 			>
 				<MapPin class="size-3.5" /> {{ distritosDoCliente[0].nome }}

@@ -8,6 +8,7 @@ import Etiqueta from "@/components/Etiqueta.vue"
 import LinhaEtapas from "@/components/LinhaEtapas.vue"
 import Vazio from "@/components/Vazio.vue"
 import { data, relativo } from "@/format"
+import { CONSULTA } from "@/modo"
 import { podeEditar } from "@/store"
 
 const route = useRoute()
@@ -36,7 +37,7 @@ const filtradas = computed(() => (lista.value || []).filter(ABAS.find((a) => a.i
 				<h1 class="text-2xl font-semibold tracking-tight text-slate-900">Ordens de Serviço</h1>
 				<p class="mt-1 text-sm text-slate-500">Acompanhe cada equipamento desde o recebimento até a devolução.</p>
 			</div>
-			<RouterLink v-if="podeEditar()" to="/solicitar" class="btn-primary"><Plus class="size-4" /> Nova solicitação</RouterLink>
+			<RouterLink v-if="podeEditar() && !CONSULTA" to="/solicitar" class="btn-primary"><Plus class="size-4" /> Nova solicitação</RouterLink>
 		</div>
 
 		<nav class="flex gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1">
@@ -61,8 +62,8 @@ const filtradas = computed(() => (lista.value || []).filter(ABAS.find((a) => a.i
 		</div>
 
 		<div v-else-if="!filtradas.length" class="card">
-			<Vazio :icone="ClipboardList" titulo="Nenhuma ordem aqui" texto="Quando você solicitar um serviço, ele aparecerá nesta lista.">
-				<RouterLink to="/solicitar" class="btn-primary"><Plus class="size-4" /> Solicitar serviço</RouterLink>
+			<Vazio :icone="ClipboardList" titulo="Nenhuma ordem aqui" :texto="CONSULTA ? 'As ordens de serviço do laboratório aparecerão aqui.' : 'Quando você solicitar um serviço, ele aparecerá nesta lista.'">
+				<RouterLink v-if="!CONSULTA" to="/solicitar" class="btn-primary"><Plus class="size-4" /> Solicitar serviço</RouterLink>
 			</Vazio>
 		</div>
 

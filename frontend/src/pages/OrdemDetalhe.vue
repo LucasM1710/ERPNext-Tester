@@ -7,6 +7,7 @@ import Etiqueta from "@/components/Etiqueta.vue"
 import LinhaEtapas from "@/components/LinhaEtapas.vue"
 import Modal from "@/components/Modal.vue"
 import { data, dataHora } from "@/format"
+import { CONSULTA } from "@/modo"
 import { podeEditar, toast } from "@/store"
 
 const props = defineProps({ id: String })
@@ -73,10 +74,10 @@ async function responder() {
 				<div class="min-w-0 flex-1">
 					<p class="font-semibold text-amber-900">Orçamento aguardando sua aprovação</p>
 					<p class="text-sm text-amber-800/80">
-						{{ o.orcamento ? `Orçamento ${o.orcamento}. ` : "" }}O laboratório só inicia o serviço após a sua resposta.
+						{{ o.orcamento ? `Orçamento ${o.orcamento}. ` : "" }}{{ CONSULTA ? "Responda ao laboratório pelo canal comercial de costume." : "O laboratório só inicia o serviço após a sua resposta." }}
 					</p>
 				</div>
-				<div v-if="podeEditar(o.cliente)" class="flex gap-2">
+				<div v-if="podeEditar(o.cliente) && !CONSULTA" class="flex gap-2">
 					<button class="btn-secondary" @click="confirmar = false"><ThumbsDown class="size-4" /> Recusar</button>
 					<button class="btn-success" @click="confirmar = true"><ThumbsUp class="size-4" /> Aprovar</button>
 				</div>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+	body { font-family: Arial, Helvetica, sans-serif; color: #1f2937; font-size: 9px; margin: 0; }
+	.topo { border-bottom: 3px solid #045a88; padding-bottom: 8px; margin-bottom: 10px; }
+	.topo h1 { color: #045a88; font-size: 16px; margin: 0; }
+	.topo p { margin: 3px 0 0; color: #6b7280; font-size: 9px; }
+	table { width: 100%; border-collapse: collapse; }
+	th { background: #045a88; color: #fff; text-align: left; padding: 5px 4px; font-size: 8px; text-transform: uppercase; }
+	td { padding: 4px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+	tr:nth-child(even) td { background: #f6f9fb; }
+	.rodape { margin-top: 10px; color: #9ca3af; font-size: 8px; }
+</style>
+</head>
+<body>
+	<div class="topo">
+		<img src="/assets/solucoes/img/er-analitica.png" style="height: 34px; float: right;" />
+		<h1>Relatório de equipamentos e calibrações</h1>
+		<p>{{ empresa }} · gerado em {{ frappe.utils.format_datetime(gerado_em, "dd/MM/yyyy HH:mm") }} por {{ usuario }} · {{ linhas|length }} equipamento(s)</p>
+	</div>
+	<table>
+		<thead><tr>{% for c in cabecalho %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+		<tbody>
+		{% for l in linhas %}<tr>{% for v in l %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}
+		</tbody>
+	</table>
+	<p class="rodape">Status pelas faixas do laboratório: Calibrado (mais de 60 dias), Alerta 60 (46 a 60 dias), Crítico (até 45 dias), Vencido, Agendado (OS em aberto). Fonte: OS do laboratório e certificados de terceiros enviados pelo cliente.</p>
+</body>
+</html>

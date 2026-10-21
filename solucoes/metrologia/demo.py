@@ -119,7 +119,7 @@ def criar_demo_verificacoes():
 	ja_verificados = set(frappe.get_all("Verificacao Intermediaria", pluck="equipamento"))
 	equipamentos = [
 		e
-		for cliente in (CLIENTES[0], CLIENTE_DISTRITOS)
+		for cliente in (_id_cliente(CLIENTES[0]), _id_cliente(CLIENTE_DISTRITOS))
 		for e in frappe.get_all(
 			"Equipamento Cliente",
 			filters={"cliente": cliente, "tolerancia": [">", 0]},
@@ -156,9 +156,9 @@ DISTRITOS = ["Distrito Norte", "Distrito Sul", "Distrito Leste", "Distrito Oeste
 USUARIOS_DISTRITOS = [
 	# e-mail, nome, perfil, distritos
 	("gestor@demo.com", "Gabriela Gestora", "Gestor", []),
-	("ana@demo.com", "Ana Norte", "Responsável", ["Distrito Norte"]),
-	("bruno@demo.com", "Bruno Sul-Leste", "Responsável", ["Distrito Sul", "Distrito Leste"]),
-	("auditor@demo.com", "Auditor Externo", "Consulta", DISTRITOS),
+	("ana@demo.com", "Ana Norte", "Líder", ["Distrito Norte"]),
+	("bruno@demo.com", "Bruno Sul-Leste", "Líder", ["Distrito Sul", "Distrito Leste"]),
+	("auditor@demo.com", "Auditor Externo", "Usuário", []),
 ]
 
 
@@ -166,7 +166,9 @@ def criar_demo_distritos():
 	"""Cliente com controle por distritos: 1 gestor, 2 responsáveis e 1 auditor (consulta)."""
 	random.seed(7)
 	cliente = _cliente(CLIENTE_DISTRITOS)
-	frappe.db.set_value("Customer", cliente, "usa_controle_distritos", 1)
+	if not frappe.db.exists("Cliente Portal", cliente):
+		frappe.get_doc({"doctype": "Cliente Portal", "cliente": cliente}).insert(ignore_permissions=True)
+	frappe.db.set_value("Cliente Portal", cliente, "usa_controle_distritos", 1)
 
 	ids = {}
 	for nome in DISTRITOS:
@@ -280,18 +282,41 @@ def _criar_usuario(email, nome_completo):
 	user.save(ignore_permissions=True)
 
 
+def _cnpj_ficticio(nome):
+	"""CNPJ válido (dígitos corretos), diferente para cada cliente de demonstração: 99.xxx.xxx/0001-dv."""
+	base = [9, 9] + [int(c) for c in f"{int(frappe.generate_hash(nome, 6), 16) % 10**6:06d}"] + [0, 0, 0, 1]
+	for pesos in ([5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2], [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]):
+		resto = sum(d * p for d, p in zip(base, pesos)) % 11
+		base.append(0 if resto < 2 else 11 - resto)
+	n = "".join(map(str, base))
+	return f"{n[:2]}.{n[2:5]}.{n[5:8]}/{n[8:12]}-{n[12:]}"
+
+
+def _id_cliente(nome):
+	return frappe.db.get_value("Customer", {"customer_name": nome}) or nome
+
+
 def _cliente(nome):
-	if not frappe.db.exists("Customer", nome):
-		frappe.get_doc(
-			{
-				"doctype": "Customer",
-				"customer_name": nome,
-				"customer_type": "Company",
-				"customer_group": frappe.db.get_value("Customer Group", {"is_group": 0}) or "All Customer Groups",
-				"territory": frappe.db.get_value("Territory", {"is_group": 0}) or "All Territories",
-			}
-		).insert(ignore_permissions=True)
-	return nome
+	"""Cliente de demonstração. Procura pelo nome (o ID pode vir de série, ex.: CLIENTE-00001)
+	e preenche os campos que o cadastro da empresa exige (CNPJ etc.) com valores fictícios."""
+	existente = frappe.db.get_value("Customer", {"customer_name": nome})
+	if existente:
+		return existente
+	doc = frappe.get_doc(
+		{
+			"doctype": "Customer",
+			"customer_name": nome,
+			"customer_type": "Company",
+			"customer_group": frappe.db.get_value("Customer Group", {"is_group": 0}) or "All Customer Groups",
+			"territory": frappe.db.get_value("Territory", {"is_group": 0}) or "All Territories",
+		}
+	)
+	cnpj = _cnpj_ficticio(nome)
+	ficticios = {"cnpj": cnpj, "tax_id": cnpj, "inscricao_estadual": "ISENTO"}
+	meta = frappe.get_meta("Customer")
+	doc.update({campo: valor for campo, valor in ficticios.items() if meta.has_field(campo)})
+	doc.insert(ignore_permissions=True)
+	return doc.name
 
 
 def _usuario_portal(clientes):
@@ -310,11 +335,12 @@ def _usuario_portal(clientes):
 		user.new_password = SENHA
 		user.save(ignore_permissions=True)
 
-	for nome in clientes:
-		cliente = frappe.get_doc("Customer", nome)
-		if not any(p.user == USUARIO for p in cliente.get("portal_users", [])):
-			cliente.append("portal_users", {"user": USUARIO})
-			cliente.save(ignore_permissions=True)
+	# Acesso explícito (o portal só reconhece "Usuario Portal Cliente").
+	for cliente in clientes:
+		if not frappe.db.exists("Usuario Portal Cliente", {"usuario": USUARIO, "cliente": cliente}):
+			frappe.get_doc(
+				{"doctype": "Usuario Portal Cliente", "email": USUARIO, "cliente": cliente, "perfil": "Gestor", "ativo": 1}
+			).insert(ignore_permissions=True)
 
 
 def _ordens(cliente):
@@ -353,8 +379,8 @@ def _ordens(cliente):
 
 
 def apagar_dados_demo():
-	for cliente in [*CLIENTES, CLIENTE_DISTRITOS]:
-		for dt in ("Ordem Servico Metrologia", "Certificado Calibracao", "Equipamento Cliente", "Usuario Portal Cliente", "Distrito Cliente"):
+	for cliente in [_id_cliente(n) for n in (*CLIENTES, CLIENTE_DISTRITOS)]:
+		for dt in ("Ordem Servico Metrologia", "Certificado Calibracao", "Equipamento Cliente", "Usuario Portal Cliente", "Distrito Cliente", "Cliente Portal"):
 			for name in frappe.get_all(dt, filters={"cliente": cliente}, pluck="name"):
 				frappe.delete_doc(dt, name, force=True, ignore_permissions=True)
 	frappe.db.commit()
