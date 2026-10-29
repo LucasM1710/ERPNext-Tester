@@ -1,0 +1,153 @@
+{
+ "actions": [],
+ "autoname": "format:MAN-{#####}",
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "equipamento",
+  "data",
+  "tipo",
+  "componente",
+  "valor_anterior",
+  "valor_novo",
+  "cb1",
+  "custo",
+  "fornecedor",
+  "executado_por",
+  "chamado",
+  "sec2",
+  "descricao",
+  "anexo"
+ ],
+ "fields": [
+  {
+   "fieldname": "equipamento",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Equipamento",
+   "options": "Equipamento TI",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "data",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Data",
+   "reqd": 1
+  },
+  {
+   "default": "Upgrade",
+   "fieldname": "tipo",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tipo",
+   "options": "Upgrade\nManutenção Corretiva\nManutenção Preventiva\nFormatação / Reinstalação\nTroca de Peça\nOutro",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:['Upgrade','Troca de Peça','Formatação / Reinstalação'].includes(doc.tipo)",
+   "description": "Memória, armazenamento, processador ou sistema: o cadastro do equipamento é atualizado automaticamente",
+   "fieldname": "componente",
+   "fieldtype": "Select",
+   "label": "Componente alterado",
+   "options": "\nMemória RAM\nArmazenamento\nProcessador\nSistema Operacional\nOutro"
+  },
+  {
+   "fieldname": "valor_anterior",
+   "fieldtype": "Data",
+   "label": "Antes",
+   "read_only": 1
+  },
+  {
+   "depends_on": "componente",
+   "fieldname": "valor_novo",
+   "fieldtype": "Data",
+   "label": "Depois"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "custo",
+   "fieldtype": "Currency",
+   "label": "Custo"
+  },
+  {
+   "fieldname": "fornecedor",
+   "fieldtype": "Data",
+   "label": "Fornecedor / assistência"
+  },
+  {
+   "fieldname": "executado_por",
+   "fieldtype": "Link",
+   "label": "Executado por",
+   "options": "User"
+  },
+  {
+   "fieldname": "chamado",
+   "fieldtype": "Link",
+   "label": "Chamado relacionado",
+   "options": "Chamado TI"
+  },
+  {
+   "fieldname": "sec2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "descricao",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "O que foi feito",
+   "reqd": 1
+  },
+  {
+   "fieldname": "anexo",
+   "fieldtype": "Attach",
+   "label": "Anexo (nota, orçamento, laudo)"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Manutencao Equipamento TI",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Tecnico TI",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "data",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "equipamento",
+ "track_changes": 1
+}

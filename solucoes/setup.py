@@ -59,16 +59,17 @@ def conferir():
 			continue
 		problemas += [f"FALTA o campo {doctype}.{c}" for c in lista if not frappe.db.has_column(doctype, c)]
 
-	# 2) Nenhum DocType/módulo do portal pode já existir em outro app
-	raiz = frappe.get_app_path(APP, "metrologia", "doctype")
-	for pasta in sorted(os.listdir(raiz)):
-		caminho = os.path.join(raiz, pasta, f"{pasta}.json")
-		if not os.path.exists(caminho):
-			continue
-		nome = frappe.get_file_json(caminho)["name"]
-		modulo = frappe.db.get_value("DocType", nome, "module")
-		if modulo and modulo != "Metrologia":
-			problemas.append(f"CONFLITO: já existe o DocType {nome} no módulo {modulo}")
+	# 2) Nenhum DocType/módulo do app (portal e Central de TI) pode já existir em outro app
+	for pasta_modulo, nome_modulo in (("metrologia", "Metrologia"), ("central_ti", "Central TI")):
+		raiz = frappe.get_app_path(APP, pasta_modulo, "doctype")
+		for pasta in sorted(os.listdir(raiz)):
+			caminho = os.path.join(raiz, pasta, f"{pasta}.json")
+			if not os.path.exists(caminho):
+				continue
+			nome = frappe.get_file_json(caminho)["name"]
+			modulo = frappe.db.get_value("DocType", nome, "module")
+			if modulo and modulo != nome_modulo:
+				problemas.append(f"CONFLITO: já existe o DocType {nome} no módulo {modulo}")
 	for modulo in frappe.get_module_list(APP):
 		app = frappe.db.get_value("Module Def", modulo, "app_name")
 		if app and app != APP:
@@ -89,6 +90,10 @@ def conferir():
 def after_migrate():
 	create_custom_fields(CAMPOS_CUSTOMIZADOS, update=True)
 	preencher_padroes_configuracao()
+	# Central de TI: papel Tecnico TI, defaults, prazos de SLA, categorias e tipos de equipamento
+	from solucoes.central_ti.instalacao import configurar
+
+	configurar()
 
 
 def garantir_modulos():

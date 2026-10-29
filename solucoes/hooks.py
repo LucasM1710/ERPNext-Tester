@@ -80,7 +80,16 @@ get_website_user_home_page = "solucoes.portal.pagina_inicial.pagina_inicial"
 website_route_rules = [
 	{"from_route": "/cliente/<path:app_path>", "to_route": "cliente"},
 	{"from_route": "/consulta/<path:app_path>", "to_route": "consulta"},
+	# Central de TI (módulo Central TI): todas as sub-rotas de /ti servem a mesma página
+	{"from_route": "/ti/<path:app_path>", "to_route": "ti"},
 ]
+
+# Central de TI: e-mails recebidos pela conta da TI (Append To = Chamado TI) entram na conversa do chamado
+doc_events = {
+	"Communication": {
+		"after_insert": "solucoes.central_ti.email.ao_receber_email",
+	},
+}
 
 # Generators
 # ----------
@@ -203,6 +212,13 @@ scheduler_events = {
 	],
 	"weekly": [
 		"solucoes.portal.notificacoes.enviar_resumos_semanais",
+	],
+	# Central de TI: situação do SLA e alertas a cada 15 min; fechamento automático de resolvidos
+	"cron": {
+		"*/15 * * * *": ["solucoes.central_ti.tarefas.atualizar_sla"],
+	},
+	"hourly": [
+		"solucoes.central_ti.tarefas.fechar_resolvidos",
 	],
 }
 

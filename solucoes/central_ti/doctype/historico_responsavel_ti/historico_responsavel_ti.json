@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "data",
+  "responsavel",
+  "responsavel_nome",
+  "departamento",
+  "registrado_por"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "data",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Data"
+  },
+  {
+   "columns": 3,
+   "fieldname": "responsavel",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Responsável",
+   "options": "User"
+  },
+  {
+   "columns": 2,
+   "fieldname": "responsavel_nome",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome"
+  },
+  {
+   "columns": 2,
+   "fieldname": "departamento",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Departamento"
+  },
+  {
+   "fieldname": "registrado_por",
+   "fieldtype": "Link",
+   "label": "Registrado por",
+   "options": "User"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Historico Responsavel TI",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

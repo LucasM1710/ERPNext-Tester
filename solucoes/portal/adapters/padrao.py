@@ -1,5 +1,7 @@
 """Adapter padrão: lê os DocTypes do módulo Metrologia deste app."""
 
+from collections import Counter
+
 import frappe
 from frappe import _
 from frappe.utils import getdate, today
@@ -349,14 +351,9 @@ class AdapterPadrao(PortalAdapter):
 		linhas = frappe.get_all(OS, filters=f, fields=["*"], order_by="data_solicitacao desc, creation desc", limit_page_length=0)
 		if not linhas:
 			return []
-		contagem = dict(
-			frappe.get_all(
-				OS_ITEM,
-				filters={"parent": ["in", [l.name for l in linhas]], "parenttype": OS},
-				fields=["parent", "count(*) as qtd"],
-				group_by="parent",
-				as_list=True,
-			)
+		# Contagem em Python: o Frappe 15 só aceita "count(*)" em texto e o 16 só na forma de dict.
+		contagem = Counter(
+			frappe.get_all(OS_ITEM, filters={"parent": ["in", [l.name for l in linhas]], "parenttype": OS}, pluck="parent")
 		)
 		return [self._ordem(d, contagem.get(d.name, 0)) for d in linhas]
 

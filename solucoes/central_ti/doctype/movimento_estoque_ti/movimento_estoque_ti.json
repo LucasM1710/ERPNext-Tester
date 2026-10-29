@@ -1,0 +1,130 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "tipo",
+  "quantidade",
+  "data",
+  "cb1",
+  "para_usuario",
+  "chamado",
+  "nota_compra",
+  "item_nota",
+  "saldo_apos",
+  "observacao"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Item",
+   "options": "Item Estoque TI",
+   "reqd": 1
+  },
+  {
+   "default": "Saída",
+   "description": "Ajuste: informe a diferença (positiva ou negativa) encontrada na contagem",
+   "fieldname": "tipo",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Movimento",
+   "options": "Entrada\nSaída\nAjuste",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quantidade",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Quantidade",
+   "reqd": 1
+  },
+  {
+   "default": "now",
+   "fieldname": "data",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Data"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "para_usuario",
+   "fieldtype": "Link",
+   "label": "Entregue para",
+   "options": "User"
+  },
+  {
+   "fieldname": "chamado",
+   "fieldtype": "Link",
+   "label": "Chamado",
+   "options": "Chamado TI"
+  },
+  {
+   "fieldname": "nota_compra",
+   "fieldtype": "Link",
+   "label": "Nota de Compra (ERP)",
+   "options": "Purchase Invoice"
+  },
+  {
+   "fieldname": "item_nota",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Linha da nota",
+   "read_only": 1
+  },
+  {
+   "fieldname": "saldo_apos",
+   "fieldtype": "Int",
+   "label": "Saldo após o movimento",
+   "read_only": 1
+  },
+  {
+   "fieldname": "observacao",
+   "fieldtype": "Small Text",
+   "label": "Observação"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Movimento Estoque TI",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Tecnico TI",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "data",
+ "sort_order": "DESC",
+ "states": []
+}

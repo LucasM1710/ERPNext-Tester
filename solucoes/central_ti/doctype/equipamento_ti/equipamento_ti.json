@@ -1,0 +1,442 @@
+{
+ "actions": [],
+ "autoname": "field:nome",
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_id",
+  "nome",
+  "tipo",
+  "grupo",
+  "status",
+  "cb_id",
+  "marca",
+  "modelo",
+  "numero_serie",
+  "patrimonio",
+  "sec_resp",
+  "responsavel",
+  "responsavel_nome",
+  "departamento",
+  "cb_resp",
+  "localizacao",
+  "termo_responsabilidade",
+  "data_termo",
+  "sec_cfg",
+  "processador",
+  "memoria_ram",
+  "cb_cfg",
+  "armazenamento",
+  "sistema_operacional",
+  "sec_rede",
+  "endereco_ip",
+  "endereco_mac",
+  "cb_rede",
+  "firmware",
+  "sec_cel",
+  "imei",
+  "numero_linha",
+  "cb_cel",
+  "operadora",
+  "sec_outras",
+  "especificacoes",
+  "sec_compra",
+  "data_compra",
+  "valor_compra",
+  "fornecedor",
+  "cb_compra",
+  "garantia_ate",
+  "nota_compra",
+  "item_nota",
+  "ativo_erp",
+  "sec_ind",
+  "fim_vida_util",
+  "custo_manutencoes",
+  "custo_total",
+  "cb_ind",
+  "qtd_manutencoes",
+  "qtd_chamados",
+  "sec_hist",
+  "historico_responsaveis",
+  "sec_obs",
+  "observacoes"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_id",
+   "fieldtype": "Section Break",
+   "label": "Identificação"
+  },
+  {
+   "bold": 1,
+   "description": "Como a TI chama o equipamento (ex.: LAB-NB-07)",
+   "fieldname": "nome",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "Nome / Hostname",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "tipo",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tipo",
+   "options": "Tipo Equipamento TI",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "tipo.grupo",
+   "fieldname": "grupo",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Grupo",
+   "read_only": 1
+  },
+  {
+   "default": "Em Estoque",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Em Uso\nEm Estoque\nEm Manutenção\nEmprestado\nDescartado\nExtraviado"
+  },
+  {
+   "fieldname": "cb_id",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "marca",
+   "fieldtype": "Data",
+   "label": "Marca"
+  },
+  {
+   "fieldname": "modelo",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Modelo"
+  },
+  {
+   "fieldname": "numero_serie",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Número de Série"
+  },
+  {
+   "fieldname": "patrimonio",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Patrimônio"
+  },
+  {
+   "fieldname": "sec_resp",
+   "fieldtype": "Section Break",
+   "label": "Com quem está"
+  },
+  {
+   "fieldname": "responsavel",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Responsável",
+   "options": "User"
+  },
+  {
+   "fieldname": "responsavel_nome",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome do responsável",
+   "read_only": 1
+  },
+  {
+   "fieldname": "departamento",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Departamento"
+  },
+  {
+   "fieldname": "cb_resp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "localizacao",
+   "fieldtype": "Data",
+   "label": "Localização"
+  },
+  {
+   "fieldname": "termo_responsabilidade",
+   "fieldtype": "Attach",
+   "label": "Termo de responsabilidade (assinado)"
+  },
+  {
+   "fieldname": "data_termo",
+   "fieldtype": "Date",
+   "label": "Data do termo"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Computador'",
+   "fieldname": "sec_cfg",
+   "fieldtype": "Section Break",
+   "label": "Configuração"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Computador'",
+   "fieldname": "processador",
+   "fieldtype": "Data",
+   "label": "Processador"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Computador'",
+   "fieldname": "memoria_ram",
+   "fieldtype": "Data",
+   "label": "Memória RAM"
+  },
+  {
+   "fieldname": "cb_cfg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Computador'",
+   "fieldname": "armazenamento",
+   "fieldtype": "Data",
+   "label": "Armazenamento"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Computador'",
+   "fieldname": "sistema_operacional",
+   "fieldtype": "Data",
+   "label": "Sistema operacional"
+  },
+  {
+   "depends_on": "eval:['Rede e Servidores','Impressora'].includes(doc.grupo)",
+   "fieldname": "sec_rede",
+   "fieldtype": "Section Break",
+   "label": "Rede"
+  },
+  {
+   "depends_on": "eval:['Rede e Servidores','Impressora'].includes(doc.grupo)",
+   "fieldname": "endereco_ip",
+   "fieldtype": "Data",
+   "label": "Endereço IP"
+  },
+  {
+   "depends_on": "eval:['Rede e Servidores','Impressora'].includes(doc.grupo)",
+   "fieldname": "endereco_mac",
+   "fieldtype": "Data",
+   "label": "Endereço MAC"
+  },
+  {
+   "fieldname": "cb_rede",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:['Rede e Servidores','Impressora'].includes(doc.grupo)",
+   "fieldname": "firmware",
+   "fieldtype": "Data",
+   "label": "Firmware / versão"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Celular'",
+   "fieldname": "sec_cel",
+   "fieldtype": "Section Break",
+   "label": "Linha"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Celular'",
+   "fieldname": "imei",
+   "fieldtype": "Data",
+   "label": "IMEI"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Celular'",
+   "fieldname": "numero_linha",
+   "fieldtype": "Data",
+   "label": "Número da linha"
+  },
+  {
+   "fieldname": "cb_cel",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.grupo=='Celular'",
+   "fieldname": "operadora",
+   "fieldtype": "Data",
+   "label": "Operadora"
+  },
+  {
+   "fieldname": "sec_outras",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "especificacoes",
+   "fieldtype": "Small Text",
+   "label": "Outras especificações"
+  },
+  {
+   "fieldname": "sec_compra",
+   "fieldtype": "Section Break",
+   "label": "Compra e garantia"
+  },
+  {
+   "fieldname": "data_compra",
+   "fieldtype": "Date",
+   "label": "Data da compra"
+  },
+  {
+   "fieldname": "valor_compra",
+   "fieldtype": "Currency",
+   "label": "Valor de compra"
+  },
+  {
+   "fieldname": "fornecedor",
+   "fieldtype": "Data",
+   "label": "Fornecedor"
+  },
+  {
+   "fieldname": "cb_compra",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "garantia_ate",
+   "fieldtype": "Date",
+   "in_standard_filter": 1,
+   "label": "Garantia até"
+  },
+  {
+   "fieldname": "nota_compra",
+   "fieldtype": "Link",
+   "label": "Nota de Compra (ERP)",
+   "options": "Purchase Invoice"
+  },
+  {
+   "fieldname": "item_nota",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Linha da nota",
+   "read_only": 1
+  },
+  {
+   "description": "Opcional: o Ativo do ERPNext, se o equipamento for imobilizado",
+   "fieldname": "ativo_erp",
+   "fieldtype": "Link",
+   "label": "Ativo (ERP)",
+   "options": "Asset"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_ind",
+   "fieldtype": "Section Break",
+   "label": "Custos e indicadores"
+  },
+  {
+   "description": "Data da compra + vida útil do tipo",
+   "fieldname": "fim_vida_util",
+   "fieldtype": "Date",
+   "label": "Fim da vida útil",
+   "read_only": 1
+  },
+  {
+   "fieldname": "custo_manutencoes",
+   "fieldtype": "Currency",
+   "label": "Custo das manutenções",
+   "read_only": 1
+  },
+  {
+   "fieldname": "custo_total",
+   "fieldtype": "Currency",
+   "label": "Custo total (compra + manutenções)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_ind",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "qtd_manutencoes",
+   "fieldtype": "Int",
+   "label": "Manutenções / upgrades",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qtd_chamados",
+   "fieldtype": "Int",
+   "label": "Chamados",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_hist",
+   "fieldtype": "Section Break",
+   "label": "Histórico de responsáveis"
+  },
+  {
+   "fieldname": "historico_responsaveis",
+   "fieldtype": "Table",
+   "label": "Histórico",
+   "options": "Historico Responsavel TI",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "observacoes",
+   "fieldtype": "Small Text",
+   "label": "Observações"
+  }
+ ],
+ "links": [
+  {
+   "group": "Histórico",
+   "link_doctype": "Manutencao Equipamento TI",
+   "link_fieldname": "equipamento"
+  },
+  {
+   "group": "Histórico",
+   "link_doctype": "Chamado TI",
+   "link_fieldname": "equipamento"
+  }
+ ],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Equipamento TI",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Tecnico TI",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "tipo,modelo,responsavel_nome,departamento",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "nome",
+ "track_changes": 1
+}

@@ -57,3 +57,5 @@ jspm_packages/
 # Portal do cliente: o build (solucoes/public/portal e solucoes/www/cliente.html) VAI para o git,
 # para o servidor não precisar de build. Só as dependências ficam de fora.
 frontend/node_modules/
+frontend_ti/node_modules/
+# Central de TI: o build (solucoes/public/central e solucoes/www/ti.html) também vai para o git

@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "ano",
+  "compras",
+  "manutencoes",
+  "observacao"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "ano",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Ano",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "compras",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Compras de equipamentos"
+  },
+  {
+   "columns": 3,
+   "fieldname": "manutencoes",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Manutenções"
+  },
+  {
+   "columns": 2,
+   "fieldname": "observacao",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Observação"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Orcamento Anual TI",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

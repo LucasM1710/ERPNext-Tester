@@ -3,6 +3,9 @@
   "scripts": {
     "portal:install": "cd frontend && yarn install",
     "portal:dev": "cd frontend && yarn dev",
-    "portal:build": "cd frontend && yarn build"
+    "portal:build": "cd frontend && yarn build",
+    "ti:install": "cd frontend_ti && yarn install",
+    "ti:dev": "cd frontend_ti && yarn dev",
+    "ti:build": "cd frontend_ti && yarn build"
   }
 }

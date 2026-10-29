@@ -1,0 +1,230 @@
+{
+ "actions": [],
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_geral",
+  "titulo",
+  "email_ti",
+  "cb_geral",
+  "notificar_por_email",
+  "enviar_pesquisa_satisfacao",
+  "sec_expediente",
+  "horario_inicio",
+  "horario_fim",
+  "cb_exp",
+  "trabalha_sabado",
+  "lista_feriados",
+  "sec_sla",
+  "prazos",
+  "alerta_sla_percentual",
+  "sec_equipe",
+  "tecnicos",
+  "sec_auto",
+  "dias_fechamento_automatico",
+  "sec_tv",
+  "tv_ativo",
+  "tv_chave",
+  "cb_tv",
+  "tv_mostrar_nomes",
+  "tv_segundos_slide",
+  "sec_orc",
+  "orcamentos",
+  "numero_colaboradores"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_geral",
+   "fieldtype": "Section Break",
+   "label": "Geral"
+  },
+  {
+   "default": "Central de TI",
+   "fieldname": "titulo",
+   "fieldtype": "Data",
+   "label": "Título"
+  },
+  {
+   "description": "Endereço que recebe chamados por e-mail (ex.: ti@empresa.com.br). Configure a Email Account com 'Append To' = Chamado TI.",
+   "fieldname": "email_ti",
+   "fieldtype": "Data",
+   "label": "E-mail da TI",
+   "options": "Email"
+  },
+  {
+   "fieldname": "cb_geral",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "notificar_por_email",
+   "fieldtype": "Check",
+   "label": "Notificar por e-mail"
+  },
+  {
+   "default": "1",
+   "fieldname": "enviar_pesquisa_satisfacao",
+   "fieldtype": "Check",
+   "label": "Pedir avaliação ao resolver"
+  },
+  {
+   "fieldname": "sec_expediente",
+   "fieldtype": "Section Break",
+   "label": "Expediente (para contar o SLA em horas úteis)"
+  },
+  {
+   "default": "08:00:00",
+   "fieldname": "horario_inicio",
+   "fieldtype": "Time",
+   "label": "Início"
+  },
+  {
+   "default": "18:00:00",
+   "fieldname": "horario_fim",
+   "fieldtype": "Time",
+   "label": "Fim"
+  },
+  {
+   "fieldname": "cb_exp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "trabalha_sabado",
+   "fieldtype": "Check",
+   "label": "Atende aos sábados"
+  },
+  {
+   "description": "Opcional: feriados não contam no SLA",
+   "fieldname": "lista_feriados",
+   "fieldtype": "Link",
+   "label": "Lista de Feriados",
+   "options": "Holiday List"
+  },
+  {
+   "fieldname": "sec_sla",
+   "fieldtype": "Section Break",
+   "label": "Prazos por Prioridade (SLA)"
+  },
+  {
+   "fieldname": "prazos",
+   "fieldtype": "Table",
+   "label": "Prazos",
+   "options": "Prazo SLA TI"
+  },
+  {
+   "default": "80",
+   "fieldname": "alerta_sla_percentual",
+   "fieldtype": "Int",
+   "label": "Alertar quando consumir (%) do prazo"
+  },
+  {
+   "fieldname": "sec_equipe",
+   "fieldtype": "Section Break",
+   "label": "Equipe de TI"
+  },
+  {
+   "fieldname": "tecnicos",
+   "fieldtype": "Table",
+   "label": "Técnicos",
+   "options": "Tecnico TI"
+  },
+  {
+   "fieldname": "sec_auto",
+   "fieldtype": "Section Break",
+   "label": "Automações"
+  },
+  {
+   "default": "3",
+   "fieldname": "dias_fechamento_automatico",
+   "fieldtype": "Int",
+   "label": "Fechar resolvidos após (dias úteis sem resposta)"
+  },
+  {
+   "description": "Tela de indicadores para a TV da TI, aberta por um link secreto (sem login). Gere o link em Indicadores > Modo TV.",
+   "fieldname": "sec_tv",
+   "fieldtype": "Section Break",
+   "label": "Painel na TV"
+  },
+  {
+   "default": "1",
+   "fieldname": "tv_ativo",
+   "fieldtype": "Check",
+   "label": "Painel da TV ativo"
+  },
+  {
+   "description": "Gerar um novo link invalida o anterior",
+   "fieldname": "tv_chave",
+   "fieldtype": "Data",
+   "label": "Chave do link da TV",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_tv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Desmarcado: a TV mostra assunto e departamento, sem o nome de quem abriu (recomendado se a TV fica em área comum)",
+   "fieldname": "tv_mostrar_nomes",
+   "fieldtype": "Check",
+   "label": "Mostrar nomes dos colaboradores na TV"
+  },
+  {
+   "default": "20",
+   "fieldname": "tv_segundos_slide",
+   "fieldtype": "Int",
+   "label": "Segundos por slide"
+  },
+  {
+   "description": "Valores planejados por ano; a Visão do gestor compara com o realizado (compras do ERP e manutenções).",
+   "fieldname": "sec_orc",
+   "fieldtype": "Section Break",
+   "label": "Orçamento de TI"
+  },
+  {
+   "fieldname": "orcamentos",
+   "fieldtype": "Table",
+   "label": "Orçamento anual",
+   "options": "Orcamento Anual TI"
+  },
+  {
+   "description": "Para o custo de TI por colaborador. Vazio = funcionários ativos do ERPNext",
+   "fieldname": "numero_colaboradores",
+   "fieldtype": "Int",
+   "label": "Número de colaboradores"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Configuracao Central TI",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Tecnico TI",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

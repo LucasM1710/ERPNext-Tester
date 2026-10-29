@@ -1,0 +1,100 @@
+{
+ "actions": [],
+ "autoname": "field:nome",
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "nome",
+  "descricao",
+  "icone",
+  "cb1",
+  "tecnico_padrao",
+  "ordem",
+  "ativo"
+ ],
+ "fields": [
+  {
+   "fieldname": "nome",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "description": "Aparece para o colaborador ao escolher a categoria",
+   "fieldname": "descricao",
+   "fieldtype": "Small Text",
+   "label": "Descrição"
+  },
+  {
+   "default": "life-buoy",
+   "fieldname": "icone",
+   "fieldtype": "Select",
+   "label": "Ícone",
+   "options": "key-round\nlaptop\nprinter\nmail\nwifi\nlayout-grid\npackage\nsmartphone\nflask-conical\nshield\nlife-buoy"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Recebe os chamados desta categoria; vazio = distribuição automática",
+   "fieldname": "tecnico_padrao",
+   "fieldtype": "Link",
+   "label": "Técnico Padrão",
+   "options": "User"
+  },
+  {
+   "default": "10",
+   "fieldname": "ordem",
+   "fieldtype": "Int",
+   "label": "Ordem"
+  },
+  {
+   "default": "1",
+   "fieldname": "ativo",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Ativo"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Categoria Chamado TI",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Tecnico TI",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

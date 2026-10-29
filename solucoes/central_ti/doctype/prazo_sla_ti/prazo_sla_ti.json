@@ -1,0 +1,50 @@
+{
+ "actions": [],
+ "creation": "2026-10-25 09:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "prioridade",
+  "primeira_resposta_horas",
+  "resolucao_horas"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "prioridade",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Prioridade",
+   "options": "Baixa\nMédia\nAlta\nCrítica",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "primeira_resposta_horas",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "1ª Resposta (horas úteis)",
+   "reqd": 1
+  },
+  {
+   "columns": 3,
+   "fieldname": "resolucao_horas",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Resolução (horas úteis)",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-25 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Central TI",
+ "name": "Prazo SLA TI",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
