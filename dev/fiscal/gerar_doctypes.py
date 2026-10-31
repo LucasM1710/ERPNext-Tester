@@ -12,7 +12,7 @@ import os
 
 RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "solucoes", "fiscal")
 MODULO = "Fiscal"
-NOW = "2026-10-31 12:00:00.000000"
+NOW = "2026-11-01 09:00:00.000000"
 
 PAPEIS = ("System Manager", "Accounts Manager", "Accounts User")
 
@@ -362,6 +362,9 @@ write(
 			f("ambiente", "Data", "Ambiente", read_only=1),
 			cb("cb1"),
 			f("valor", "Currency", "Valor", in_list_view=1, reqd=1),
+			f("parcela", "Data", "Parcela", in_list_view=1, description="Ex.: 2/3 quando a fatura é parcelada"),
+			f("payment_term", "Data", "Condição de Pagamento da Parcela"),
+			f("valor_retencao", "Currency", "Retenção Abatida nesta Parcela", description="Parte dos impostos retidos pelo cliente que este boleto já desconta"),
 			f("emissao", "Date", "Emitido em"),
 			f("vencimento", "Date", "Vencimento", in_list_view=1, reqd=1),
 			f("multa_percentual", "Percent", "Multa"),

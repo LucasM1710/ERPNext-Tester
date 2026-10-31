@@ -93,6 +93,7 @@ Emissão de notas e boletos em que a auxiliar de financeiro **só confere e emit
 
 **Boletos:**
 - Boleto híbrido com **Pix** (linha digitável, código de barras e Pix copia-e-cola).
+- **Parcelado**: um boleto por parcela das Condições de Pagamento da fatura (ex.: 3x 30/60/90). A retenção é dividida entre as parcelas, e cada pagamento dá baixa só na sua parcela.
 - Valor líquido quando o cliente retém impostos.
 - **Baixa automática no ERP** quando pago: o recebimento (Payment Entry) é lançado e a retenção vai para a conta de impostos retidos. Pagamento a menor deixa a diferença em aberto; pagamento a maior vira crédito do cliente.
 - Segunda via com novo vencimento, baixa manual, valor atualizado com multa e juros, lembrete antes do vencimento e cobrança depois.
@@ -137,7 +138,7 @@ echo 'import solucoes.setup as s; s.instalar()' | bench --site SEU-SITE console
 |---|---|---|
 | Portal | `solucoes.metrologia.simulacao.rodar` | `solucoes.metrologia.simulacao.apagar` |
 | Central de TI | `solucoes.central_ti.demo.criar` e `solucoes.central_ti.demo_inventario.criar` | — |
-| Fiscal | `solucoes.fiscal.demo.criar` (só em Simulação) | `solucoes.fiscal.demo.apagar` |
+| Fiscal | `solucoes.fiscal.demo.criar` (só em Simulação); `solucoes.fiscal.demo.parcelado` cria duas faturas parceladas a cada execução | `solucoes.fiscal.demo.apagar` |
 
 Todas rodam com `bench --site SEU-SITE execute <comando>`. As demos criam usuários com a senha `Demo@12345`. No Fiscal, a usuária é `bia.financeiro@demo.com`.
 

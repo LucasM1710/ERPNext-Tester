@@ -26,7 +26,7 @@ def emitir_fatura(fatura):
 		frappe.throw("Ainda não dá para emitir:\n• " + "\n• ".join(erros) if erros else "Não há nada a emitir nesta fatura.")
 	si = frappe.get_doc("Sales Invoice", fatura)
 	df = regras.dados_parte("Customer", si.customer)
-	resultado = {"notas": [], "boleto": None}
+	resultado = {"notas": [], "boleto": None, "boletos": []}
 	for doc in plano["documentos"]:
 		if doc["ja_emitida"]:
 			continue
@@ -39,8 +39,10 @@ def emitir_fatura(fatura):
 	todas = frappe.get_all("Nota Fiscal", filters={"fatura": si.name, "status": "Autorizada"}, pluck="name")
 	plano = regras.planejar_fatura(si.name)
 	if plano["boleto"] and not plano["boleto"].get("ja_emitido") and all(d["ja_emitida"] for d in plano["documentos"]):
-		bol = criar_boleto(si, plano["boleto"], nota=todas[0] if todas else None)
-		resultado["boleto"] = resumo_boleto(bol)
+		for parcela in plano["boleto"]["parcelas"]:  # um boleto por parcela (ou um só)
+			bol = criar_boleto(si, parcela, nota=todas[0] if todas else None)
+			resultado["boletos"].append(resumo_boleto(bol))
+		resultado["boleto"] = resultado["boletos"][0]
 	if all(n["status"] == "Autorizada" for n in resultado["notas"]):
 		enviar_ao_cliente(si.name)
 	return resultado
@@ -144,10 +146,12 @@ def cancelar_nota(nota_id, motivo):
 		frappe.throw("Só notas autorizadas podem ser canceladas.")
 	if len((motivo or "").strip()) < 15:
 		frappe.throw("Escreva o motivo do cancelamento com pelo menos 15 caracteres (regra da SEFAZ e da prefeitura).")
-	boleto = frappe.db.get_value("Boleto Cobranca", {"nota_fiscal": nota.name, "status": ["!=", "Cancelado"]}, ["name", "status"], as_dict=True) \
-		or (nota.fatura and frappe.db.get_value("Boleto Cobranca", {"fatura": nota.fatura, "status": ["!=", "Cancelado"]}, ["name", "status"], as_dict=True))
-	if boleto and boleto.status == "Pago":
-		frappe.throw("O boleto desta nota já foi pago. Antes de cancelar, o financeiro precisa devolver o valor ou combinar com o cliente.")
+	filtro = {"fatura": nota.fatura} if nota.fatura else {"nota_fiscal": nota.name}
+	boletos = frappe.get_all("Boleto Cobranca", filters={**filtro, "status": ["!=", "Cancelado"]}, fields=["name", "status", "parcela"])
+	pagos = [b for b in boletos if b.status == "Pago"]
+	if pagos:
+		qual = "Uma parcela" if any(b.parcela for b in pagos) else "O boleto"
+		frappe.throw(f"{qual} desta nota já foi paga. Antes de cancelar, o financeiro precisa devolver o valor ou combinar com o cliente.")
 	r = provedor_notas().cancelar(nota, motivo)
 	if not r["ok"]:
 		frappe.throw(r["mensagem"])
@@ -156,8 +160,8 @@ def cancelar_nota(nota_id, motivo):
 	if nota.situacao_remessa == "Em aberto":
 		nota.situacao_remessa = None
 	nota.save(ignore_permissions=True)
-	if boleto:
-		cancelar_boleto(boleto.name, "Nota fiscal cancelada")
+	for b in boletos:  # todos os boletos (parcelas) em aberto da nota
+		cancelar_boleto(b.name, "Nota fiscal cancelada")
 	return resumo_nota(nota)
 
 
@@ -193,22 +197,25 @@ def emitir_avulsa(dados):
 
 
 # ===================================================================== boleto
-def criar_boleto(si, plano_boleto, nota=None):
+def criar_boleto(si, parcela, nota=None):
+	"""`parcela`: valor, vencimento e, se parcelada, parcela ("2/3"), payment_term e valor_retencao."""
 	cfg = config()
 	df = regras.dados_parte("Customer", si.customer)
 	bol = frappe.get_doc({
 		"doctype": "Boleto Cobranca", "status": "Em aberto", "cliente": si.customer, "nome_cliente": df.razao_social if df else si.customer_name,
 		"documento_cliente": df.cnpj_cpf if df else None, "email_cliente": df.email_nota if df else None, "fatura": si.name, "nota_fiscal": nota,
-		"ambiente": cfg.ambiente, "valor": plano_boleto["valor"], "emissao": today(), "vencimento": plano_boleto["vencimento"],
+		"ambiente": cfg.ambiente, "valor": parcela["valor"], "emissao": today(), "vencimento": parcela["vencimento"],
+		"parcela": parcela.get("parcela"), "payment_term": parcela.get("payment_term"), "valor_retencao": flt(parcela.get("valor_retencao")),
 		"multa_percentual": cfg.multa_percentual, "juros_mes_percentual": cfg.juros_mes_percentual, "instrucoes": cfg.instrucoes_boleto,
 		"banco": f"{cfg.banco_codigo} {cfg.banco_nome}",
 	})  # fmt: skip
 	bol.insert(ignore_permissions=True)
 	r = provedor_boleto().registrar(bol)
 	bol.update({"nosso_numero": r["nosso_numero"], "codigo_barras": r["codigo_barras"], "linha_digitavel": r["linha_digitavel"], "pix_copia_cola": r.get("pix")})
-	evento(bol, "Boleto registrado", f"{util.moeda(bol.valor)} · vence {getdate(bol.vencimento).strftime('%d/%m/%Y')} · nosso número {bol.nosso_numero}")
+	evento(bol, "Boleto registrado", (f"Parcela {bol.parcela} · " if bol.parcela else "")
+	       + f"{util.moeda(bol.valor)} · vence {getdate(bol.vencimento).strftime('%d/%m/%Y')} · nosso número {bol.nosso_numero}")  # fmt: skip
 	bol.save(ignore_permissions=True)
-	if nota:
+	if nota and not frappe.db.get_value("Nota Fiscal", nota, "boleto"):  # a nota aponta para o 1º boleto
 		frappe.db.set_value("Nota Fiscal", nota, "boleto", bol.name)
 	return bol
 
@@ -264,14 +271,18 @@ def _lancar_recebimento(bol, valor, data):
 		if cfg.conta_recebimento:
 			pe.paid_to = cfg.conta_recebimento
 			pe.paid_to_account_currency = frappe.get_cached_value("Account", cfg.conta_recebimento, "account_currency")
-		# só a retenção prevista (fatura - boleto) vai para a conta de retidos; o que faltar fica em aberto na fatura
-		retido = max(flt(flt(si.outstanding_amount) - flt(bol.valor), 2), 0) if cfg.conta_retencoes else 0
+		# só a retenção prevista para este boleto vai para a conta de retidos; o que faltar fica em aberto na fatura
+		previsto = flt(bol.valor_retencao) if bol.valor_retencao is not None else max(flt(flt(si.outstanding_amount) - flt(bol.valor), 2), 0)
+		retido = previsto if cfg.conta_retencoes else 0
+		if len(pe.references) > 1:  # fatura parcelada: lança na parcela deste boleto
+			ref = next((r for r in pe.references if bol.payment_term and r.get("payment_term") == bol.payment_term), pe.references[0])
+			pe.set("references", [ref])
 		pe.paid_amount = pe.received_amount = valor
 		pe.base_paid_amount = pe.base_received_amount = valor
 		if retido > 0.009:
 			centro = frappe.get_cached_value("Company", si.company, "cost_center")
 			pe.append("deductions", {"account": cfg.conta_retencoes, "cost_center": centro, "amount": retido})
-		pe.references[0].allocated_amount = min(flt(valor + retido, 2), flt(si.outstanding_amount))
+		pe.references[0].allocated_amount = min(flt(valor + retido, 2), flt(pe.references[0].outstanding_amount or si.outstanding_amount))
 		pe.set_amounts()
 		pe.insert(ignore_permissions=True)
 		pe.submit()
@@ -320,27 +331,33 @@ def enviar_nota(nota):
 		nota.save(ignore_permissions=True)
 		return
 	bol = frappe.get_doc("Boleto Cobranca", nota.boleto) if nota.boleto else None
+	parcelas = frappe.get_all("Boleto Cobranca", filters={"fatura": nota.fatura, "status": ["!=", "Cancelado"]}, pluck="name", order_by="vencimento asc") if nota.fatura else []
 	assunto = f"{nota.tipo_documento} nº {nota.numero} — {cfg.nome_fantasia or cfg.razao_social}"
-	anexos = [f"{nota.tipo_documento} {nota.numero} (PDF)", "XML"] + (["Boleto (PDF)"] if bol else [])
+	anexos = [f"{nota.tipo_documento} {nota.numero} (PDF)", "XML"] + ([f"{len(parcelas)} boletos (PDF)" if len(parcelas) > 1 else "Boleto (PDF)"] if bol else [])
 	if cfg.ambiente == "Simulação":
 		evento(nota, "E-mail (simulado)", f"Para {d.email_nota} · {assunto} · anexos: {', '.join(anexos)}")
 	else:
 		arquivos = [{"fname": f"{nota.tipo_documento}-{nota.numero}.pdf", "fcontent": documentos.pdf(documentos.html_nota(nota)) or documentos.html_nota(nota)},
 		            {"fname": f"{nota.tipo_documento}-{nota.chave_acesso}.xml", "fcontent": documentos.xml_nota(nota)}]  # fmt: skip
-		if bol:
-			arquivos.append({"fname": f"boleto-{bol.name}.pdf", "fcontent": documentos.pdf(documentos.html_boleto(bol)) or documentos.html_boleto(bol)})
-		frappe.sendmail(recipients=[d.email_nota], subject=assunto, message=_corpo_email(nota, bol, cfg), attachments=arquivos,
+		for nome in parcelas or ([bol.name] if bol else []):
+			b = frappe.get_doc("Boleto Cobranca", nome)
+			arquivos.append({"fname": f"boleto-{b.name}.pdf", "fcontent": documentos.pdf(documentos.html_boleto(b)) or documentos.html_boleto(b)})
+		frappe.sendmail(recipients=[d.email_nota], subject=assunto, message=_corpo_email(nota, parcelas, cfg), attachments=arquivos,
 		                reference_doctype="Nota Fiscal", reference_name=nota.name)  # fmt: skip
 		evento(nota, "E-mail enviado", f"Para {d.email_nota}")
 	nota.email_enviado_em = now_datetime()
 	nota.save(ignore_permissions=True)
 
 
-def _corpo_email(nota, bol, cfg):
+def _corpo_email(nota, parcelas, cfg):
 	t = f"<p>Olá,</p><p>Segue a {nota.tipo_documento} nº {nota.numero}, no valor de {util.moeda(nota.valor_total)}.</p>"
-	if bol:
-		t += f"<p>O boleto de {util.moeda(bol.valor)} vence em {getdate(bol.vencimento).strftime('%d/%m/%Y')}. Você também pode pagar pelo Pix com o QR Code do boleto.</p>"
-		t += f"<p>Linha digitável: <b>{bol.linha_digitavel}</b></p>"
+	boletos = [frappe.get_doc("Boleto Cobranca", n) for n in parcelas]
+	if boletos:
+		t += "<p>Boletos (você também pode pagar pelo Pix com o QR Code de cada boleto):</p><ul>"
+		for b in boletos:
+			rotulo = f"Parcela {b.parcela}: " if b.parcela else ""
+			t += f"<li>{rotulo}{util.moeda(b.valor)}, vence em {getdate(b.vencimento).strftime('%d/%m/%Y')} — linha digitável <b>{b.linha_digitavel}</b></li>"
+		t += "</ul>"
 	return t + f"<p>Obrigado,<br>{cfg.nome_fantasia or cfg.razao_social}</p>"
 
 
@@ -365,7 +382,7 @@ def resumo_nota(nota):
 
 
 def resumo_boleto(bol):
-	return {"id": bol.name, "status": bol.status, "valor": flt(bol.valor), "vencimento": str(bol.vencimento), "linha_digitavel": bol.linha_digitavel}
+	return {"id": bol.name, "status": bol.status, "valor": flt(bol.valor), "vencimento": str(bol.vencimento), "linha_digitavel": bol.linha_digitavel, "parcela": bol.parcela}
 
 
 def prazo_vencido(nota):

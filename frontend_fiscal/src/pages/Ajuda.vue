@@ -24,6 +24,7 @@ const GLOSSARIO = [
 const DUVIDAS = [
 	["A nota voltou rejeitada. E agora?", "O aviso vermelho em Para emitir diz o motivo e o que fazer. Corrija (geralmente o cadastro) e clique em Tentar de novo: a nota rejeitada fica no histórico e uma nova é enviada."],
 	["Errei a nota. Posso cancelar?", "Sim. Na nota, clique em Cancelar e escreva o motivo (mínimo 15 letras). NF-e: até 24 horas depois da emissão. NFS-e: depende da prefeitura. O boleto em aberto é cancelado junto. Depois emita de novo pela fatura."],
+	["Como emitir boletos parcelados?", "O parcelamento vem da fatura: escolha as Condições de Pagamento (ex.: 3x 30/60/90) na fatura do ERP ou deixe como padrão no cadastro do cliente. Sai uma nota com o valor total e um boleto por parcela. Se o cliente retém impostos, a retenção é dividida entre as parcelas. Cada pagamento dá baixa só na sua parcela."],
 	["O cliente pediu outro vencimento", "Em Boletos, use Prorrogar (2ª via): sai um boleto novo com a nova data e o antigo é cancelado."],
 	["O cliente pagou por transferência", "Em Boletos, use Marcar como pago. O recebimento é lançado na fatura."],
 	["Chegou um equipamento do cliente com nota", "Guarde a chave da nota dele. Quando o equipamento estiver pronto, vá em Remessa e retorno > Devolver equipamento ao cliente e informe essa chave. O serviço é cobrado à parte, pela fatura (NFS-e)."],

@@ -10,6 +10,7 @@ import { simulacao } from "@/store"
 const props = defineProps({ resultado: Object })
 const emit = defineEmits(["fechar", "abrir-nota"])
 const tudoOk = computed(() => props.resultado.notas.every((n) => n.status === "Autorizada"))
+const boletos = computed(() => props.resultado.boletos?.length ? props.resultado.boletos : props.resultado.boleto ? [props.resultado.boleto] : [])
 </script>
 
 <template>
@@ -33,14 +34,14 @@ const tudoOk = computed(() => props.resultado.notas.every((n) => n.status === "A
 				</div>
 			</div>
 
-			<div v-if="resultado.boleto" class="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/6 p-3">
+			<div v-for="b in boletos" :key="b.id" class="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/6 p-3">
 				<Receipt class="mt-0.5 size-5 shrink-0 text-amber-500" />
 				<div class="min-w-0 flex-1">
-					<p class="font-medium text-tinta">Boleto de {{ moeda(resultado.boleto.valor) }} <span class="font-normal text-suave">· vence {{ data(resultado.boleto.vencimento) }}</span></p>
-					<p class="mt-1 font-mono text-xs break-all text-suave">{{ resultado.boleto.linha_digitavel }}</p>
+					<p class="font-medium text-tinta">Boleto{{ b.parcela ? ` ${b.parcela}` : "" }} de {{ moeda(b.valor) }} <span class="font-normal text-suave">· vence {{ data(b.vencimento) }}</span></p>
+					<p class="mt-1 font-mono text-xs break-all text-suave">{{ b.linha_digitavel }}</p>
 					<div class="mt-2 flex flex-wrap gap-2">
-						<a :href="urlDocumento('boleto', resultado.boleto.id)" target="_blank" class="btn-secundario px-2.5 py-1.5 text-xs"><Printer class="size-3.5" /> Ver boleto</a>
-						<Copiar :texto="resultado.boleto.linha_digitavel" rotulo="Copiar linha digitável" />
+						<a :href="urlDocumento('boleto', b.id)" target="_blank" class="btn-secundario px-2.5 py-1.5 text-xs"><Printer class="size-3.5" /> Ver boleto</a>
+						<Copiar :texto="b.linha_digitavel" rotulo="Copiar linha digitável" />
 					</div>
 				</div>
 			</div>

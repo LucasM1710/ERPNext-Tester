@@ -192,12 +192,13 @@ def html_boleto(bol):
 <td class="g d mono">{escape(bol.linha_digitavel or "")}</td></tr></table>
 <table><tr>{_cel("Local de pagamento", "Pagável em qualquer banco ou pelo Pix", 'colspan="3"')}{_cel("Vencimento", venc, 'class="d"')}</tr>
 <tr>{_cel("Beneficiário", f"{cfg.razao_social} — CNPJ {util.formatar_documento(cfg.cnpj)}", 'colspan="3"')}{_cel("Agência / Código do beneficiário", f"{cfg.agencia} / {cfg.conta}", 'class="d"')}</tr>
-<tr>{_cel("Data do documento", getdate(bol.emissao).strftime("%d/%m/%Y"))}{_cel("Nº do documento", bol.fatura)}{_cel("Carteira", cfg.carteira)}{_cel("Nosso número", bol.nosso_numero, 'class="d"')}</tr>
+<tr>{_cel("Data do documento", getdate(bol.emissao).strftime("%d/%m/%Y"))}{_cel("Nº do documento", f"{bol.fatura} {bol.parcela or ''}".strip())}{_cel("Carteira", cfg.carteira)}{_cel("Nosso número", bol.nosso_numero, 'class="d"')}</tr>
 <tr><td colspan="3" rowspan="2"><span class="r">Instruções (texto de responsabilidade do beneficiário)</span>{escape(bol.instrucoes or "")}<br>Multa de {flt(bol.multa_percentual):g}% após o vencimento e juros de {flt(bol.juros_mes_percentual):g}% ao mês.{("<br>Referente à nota " + escape(bol.nota_fiscal)) if bol.nota_fiscal else ""}</td>
 <td class="d"><span class="r">(=) Valor do documento</span><span class="g">{util.moeda(bol.valor)}</span></td></tr><tr>{_cel("(+) Mora / Multa", "", 'class="d"')}</tr>
 <tr>{_cel("Pagador", f"{bol.nome_cliente} — {util.formatar_documento(bol.documento_cliente)}", 'colspan="4"')}</tr></table>
 <div style="margin-top:6px">{util.svg_codigo_barras(bol.codigo_barras) if bol.codigo_barras else ""}</div>"""
-	corpo = f"""{pago}<h1>Boleto — {escape(bol.nome_cliente or "")}</h1><p>Valor {util.moeda(bol.valor)} · Vencimento {venc}</p>{pix}
+	parcela = f" · Parcela {escape(bol.parcela)}" if bol.parcela else ""
+	corpo = f"""{pago}<h1>Boleto — {escape(bol.nome_cliente or "")}</h1><p>Valor {util.moeda(bol.valor)} · Vencimento {venc}{parcela}</p>{pix}
 <div class="tracejado"></div><span class="r">Recibo do pagador</span>{ficha}"""
 	return _pagina(f"Boleto {bol.name}", corpo, sim)
 

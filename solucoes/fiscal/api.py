@@ -224,6 +224,8 @@ def nota(id):
 		"destinatario": json.loads(doc.destinatario_json or "{}"), "protocolo": doc.protocolo, "email_enviado_em": str(doc.email_enviado_em or ""),
 		"motivo_cancelamento": doc.motivo_cancelamento, "ambiente": doc.ambiente, "xml": bool(doc.xml),
 		"pode_cancelar": doc.status == "Autorizada", "boleto_detalhe": _linha_boleto(frappe.get_doc("Boleto Cobranca", doc.boleto)) if doc.boleto else None,
+		"boletos": [_linha_boleto(frappe._dict(b)) for b in frappe.get_all("Boleto Cobranca", filters={"fatura": doc.fatura, "status": ["!=", "Cancelado"]},
+		            fields=CAMPOS_BOLETO + ["multa_percentual", "juros_mes_percentual"], order_by="vencimento asc")] if doc.fatura else [],
 	})  # fmt: skip
 	return r
 
@@ -256,7 +258,7 @@ def reenviar_email(id):
 
 
 # ===================================================================== boletos
-CAMPOS_BOLETO = ["name", "status", "cliente", "nome_cliente", "documento_cliente", "email_cliente", "fatura", "nota_fiscal", "valor", "emissao",
+CAMPOS_BOLETO = ["name", "status", "cliente", "nome_cliente", "documento_cliente", "email_cliente", "fatura", "nota_fiscal", "valor", "parcela", "emissao",
                  "vencimento", "nosso_numero", "linha_digitavel", "pix_copia_cola", "pago_em", "valor_pago", "pagamento", "ultimo_lembrete"]  # fmt: skip
 
 
@@ -332,7 +334,8 @@ def prorrogar_boleto(id, vencimento):
 		frappe.throw("O novo vencimento precisa ser hoje ou depois.")
 	emissao.cancelar_boleto(antigo.name, f"Prorrogado para {getdate(vencimento).strftime('%d/%m/%Y')}")
 	si = frappe.get_doc("Sales Invoice", antigo.fatura)
-	novo = emissao.criar_boleto(si, {"valor": flt(antigo.valor), "vencimento": str(getdate(vencimento))}, nota=antigo.nota_fiscal)
+	novo = emissao.criar_boleto(si, {"valor": flt(antigo.valor), "vencimento": str(getdate(vencimento)), "parcela": antigo.parcela,
+	                                 "payment_term": antigo.payment_term, "valor_retencao": flt(antigo.valor_retencao)}, nota=antigo.nota_fiscal)  # fmt: skip
 	emissao.evento(novo, "Segunda via", f"Substitui o boleto {antigo.name}")
 	novo.save(ignore_permissions=True)
 	return _linha_boleto(novo)

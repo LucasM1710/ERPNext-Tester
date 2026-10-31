@@ -23,6 +23,7 @@ const cadastro = ref(false)
 
 const horasDesde = computed(() => (n.value?.data_emissao ? (Date.now() - new Date(n.value.data_emissao.replace(" ", "T"))) / 36e5 : 0))
 const d = computed(() => n.value?.destinatario || {})
+const boletos = computed(() => (n.value?.boletos?.length ? n.value.boletos : n.value?.boleto_detalhe ? [n.value.boleto_detalhe] : []))
 const retencoes = computed(() =>
 	[
 		["ISS retido", n.value.iss_retido ? n.value.valores.valor_iss : 0],
@@ -173,13 +174,15 @@ onMounted(carregar)
 						</dl>
 					</section>
 
-					<section v-if="n.boleto_detalhe" class="card p-5">
-						<h2 class="mb-2 flex items-center gap-2 text-sm font-semibold text-tinta"><Receipt class="size-4 text-amber-500" /> Boleto</h2>
-						<div class="flex items-center justify-between text-sm"><span class="text-suave">{{ moeda(n.boleto_detalhe.valor) }} · vence {{ data(n.boleto_detalhe.vencimento) }}</span><Etiqueta :valor="n.boleto_detalhe.status" /></div>
-						<div class="mt-3 flex flex-wrap gap-2">
-							<a :href="urlDocumento('boleto', n.boleto_detalhe.id)" target="_blank" class="btn-secundario px-2.5 py-1.5 text-xs"><Printer class="size-3.5" /> Ver boleto</a>
-							<RouterLink to="/boletos" class="btn-fantasma px-2.5 py-1.5 text-xs">Ir para boletos</RouterLink>
+					<section v-if="boletos.length" class="card p-5">
+						<h2 class="mb-2 flex items-center gap-2 text-sm font-semibold text-tinta"><Receipt class="size-4 text-amber-500" /> {{ boletos.length > 1 ? `Boletos (${boletos.length} parcelas)` : "Boleto" }}</h2>
+						<div v-for="b in boletos" :key="b.id" class="flex items-center justify-between gap-2 border-b border-borda/60 py-2 text-sm last:border-0">
+							<a :href="urlDocumento('boleto', b.id)" target="_blank" class="text-suave hover:text-tinta hover:underline">
+								<span v-if="b.parcela" class="font-medium text-texto">{{ b.parcela }} · </span>{{ moeda(b.valor) }} · vence {{ data(b.vencimento) }}
+							</a>
+							<Etiqueta :valor="b.status" />
 						</div>
+						<RouterLink to="/boletos" class="btn-fantasma mt-2 px-2.5 py-1.5 text-xs">Ir para boletos</RouterLink>
 					</section>
 					<a v-if="n.fatura" :href="`/app/sales-invoice/${n.fatura}`" target="_blank" class="btn-fantasma w-full justify-start"><ExternalLink class="size-4" /> Fatura {{ n.fatura }} no ERP</a>
 
@@ -204,7 +207,7 @@ onMounted(carregar)
 					{{ horasDesde > 24 ? "Passaram mais de 24 horas: a SEFAZ não aceita mais o cancelamento. Fale com o contador (nota de devolução ou estorno)." : `A NF-e pode ser cancelada em até 24 horas. Restam cerca de ${Math.max(0, Math.floor(24 - horasDesde))} h.` }}
 				</p>
 				<p v-else class="rounded-xl bg-blue-500/8 px-3 py-2 text-blue-700 dark:text-blue-300">O prazo para cancelar NFS-e depende da prefeitura. Se passou do prazo, o pedido pode precisar de análise.</p>
-				<p v-if="n.boleto_detalhe && n.boleto_detalhe.status !== 'Pago'" class="text-suave">O boleto em aberto desta nota também será cancelado.</p>
+				<p v-if="boletos.some((b) => b.status !== 'Pago')" class="text-suave">{{ boletos.length > 1 ? "Os boletos (parcelas) em aberto desta nota também serão cancelados." : "O boleto em aberto desta nota também será cancelado." }}</p>
 				<div>
 					<label class="rotulo">Motivo (mínimo 15 caracteres, vai para a SEFAZ/prefeitura)</label>
 					<textarea v-model="motivo" rows="3" class="campo" placeholder="Ex.: Nota emitida com valor errado, será reemitida." />

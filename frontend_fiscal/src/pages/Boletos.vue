@@ -104,7 +104,8 @@ onMounted(carregar)
 		<div v-else class="space-y-2">
 			<article v-for="b in boletos" :key="b.id" class="card flex flex-wrap items-center gap-x-4 gap-y-3 p-4">
 				<div class="min-w-0 flex-1 basis-56">
-					<p class="truncate font-semibold text-tinta">{{ b.nome_cliente }}</p>
+					<p class="truncate font-semibold text-tinta">{{ b.nome_cliente }}
+						<span v-if="b.parcela" class="ml-1 rounded-md bg-realce px-1.5 py-0.5 text-[11px] font-medium text-suave">Parcela {{ b.parcela }}</span></p>
 					<p class="text-xs text-suave">{{ b.fatura }} · nosso número {{ b.nosso_numero }}</p>
 				</div>
 				<div class="w-40">

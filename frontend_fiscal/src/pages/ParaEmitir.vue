@@ -172,7 +172,7 @@ onMounted(carregar)
 					</div>
 					<div class="flex flex-wrap gap-1.5">
 						<Etiqueta v-for="d in f.documentos" :key="d.tipo" :valor="d.tipo" :ponto="false">{{ d.tipo }}{{ d.ja_emitida ? " ✓" : "" }}</Etiqueta>
-						<Etiqueta v-if="f.boleto" valor="Boleto" :ponto="false" />
+						<Etiqueta v-if="f.boleto" valor="Boleto" :ponto="false">{{ f.boleto.parcelas?.length > 1 ? `Boleto ${f.boleto.parcelas.length}x` : "Boleto" }}</Etiqueta>
 					</div>
 					<p class="w-28 text-right font-semibold text-tinta tabular-nums">{{ moeda(f.valor) }}</p>
 					<span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold" :class="situacao(f).classe">
@@ -202,8 +202,16 @@ onMounted(carregar)
 							</li>
 							<li v-if="f.boleto" class="relative">
 								<span class="absolute top-0 -left-[33px] grid size-6 place-items-center rounded-full bg-superficie ring-1 ring-borda"><Receipt class="size-3.5 text-amber-600" /></span>
-								<p class="font-medium text-tinta">{{ f.boleto.ja_emitido ? "Boleto já emitido" : "Gerar boleto com Pix" }}</p>
+								<p class="font-medium text-tinta">{{ f.boleto.ja_emitido ? "Boleto já emitido" : f.boleto.parcelas?.length > 1 ? `Gerar ${f.boleto.parcelas.length} boletos com Pix (parcelado)` : "Gerar boleto com Pix" }}</p>
 								<p class="text-sm text-suave">{{ f.boleto.resumo }}</p>
+								<table v-if="f.boleto.parcelas?.length > 1" class="mt-2 w-full text-xs">
+									<tr v-for="p in f.boleto.parcelas" :key="p.parcela" class="border-b border-borda/60 last:border-0">
+										<td class="py-1 pr-2 font-medium text-texto">Parcela {{ p.parcela }}</td>
+										<td class="py-1 text-suave">vence {{ data(p.vencimento) }}</td>
+										<td v-if="p.valor_retencao" class="py-1 text-right text-suave tabular-nums">− {{ moeda(p.valor_retencao) }} retido</td>
+										<td class="w-24 py-1 text-right font-medium text-tinta tabular-nums">{{ moeda(p.valor) }}</td>
+									</tr>
+								</table>
 							</li>
 							<li class="relative">
 								<span class="absolute top-0 -left-[33px] grid size-6 place-items-center rounded-full bg-superficie ring-1 ring-borda"><Mail class="size-3.5 text-blue-600" /></span>
@@ -220,7 +228,7 @@ onMounted(carregar)
 						<a :href="`/app/sales-invoice/${f.fatura}`" target="_blank" class="btn-fantasma"><ExternalLink class="size-4" /> Abrir fatura no ERP</a>
 						<button class="btn-fantasma" @click="cadastro = { tipo: 'Customer', parte: f.cliente }"><FileText class="size-4" /> Cadastro fiscal do cliente</button>
 						<button class="btn-primario ml-auto" :disabled="!f.pode_emitir" @click="confirmar = { faturas: [f] }">
-							<Send class="size-4" /> {{ f.documentos.every((d) => d.ja_emitida) ? "Gerar boleto" : f.boleto ? "Emitir nota e boleto" : "Emitir nota" }}
+							<Send class="size-4" /> {{ f.documentos.every((d) => d.ja_emitida) ? "Gerar boleto" : f.boleto ? (f.boleto.parcelas?.length > 1 ? "Emitir nota e boletos" : "Emitir nota e boleto") : "Emitir nota" }}
 						</button>
 					</div>
 				</div>
@@ -235,7 +243,9 @@ onMounted(carregar)
 					<p class="font-medium text-tinta">{{ f.nome }} <span class="font-normal text-suave">· {{ f.fatura }}</span></p>
 					<ul class="mt-1 space-y-0.5 text-sm text-suave">
 						<li v-for="d in f.documentos.filter((x) => !x.ja_emitida)" :key="d.tipo">• {{ d.tipo }} de {{ moeda(d.valores.valor_total) }}</li>
-						<li v-if="f.boleto && !f.boleto.ja_emitido">• Boleto de {{ moeda(f.boleto.valor) }}, vence {{ data(f.boleto.vencimento) }}</li>
+						<template v-if="f.boleto && !f.boleto.ja_emitido">
+							<li v-for="p in f.boleto.parcelas" :key="p.parcela || 'unico'">• Boleto{{ p.parcela ? ` ${p.parcela}` : "" }} de {{ moeda(p.valor) }}, vence {{ data(p.vencimento) }}</li>
+						</template>
 					</ul>
 				</div>
 				<p class="text-sm text-suave" v-if="!store.contexto.simulacao">Depois de autorizada, a NF-e só pode ser cancelada em até 24 horas.</p>
@@ -256,7 +266,7 @@ onMounted(carregar)
 					<span>
 						<b class="text-tinta">{{ r.fatura }}</b>:
 						<template v-if="r.erro">{{ r.erro }}</template>
-						<template v-else>{{ r.notas.map((n) => `${n.tipo} ${n.status === "Autorizada" ? "nº " + n.numero : "rejeitada"}`).join(", ") }}{{ r.boleto ? ` · boleto ${moeda(r.boleto.valor)}` : "" }}</template>
+						<template v-else>{{ r.notas.map((n) => `${n.tipo} ${n.status === "Autorizada" ? "nº " + n.numero : "rejeitada"}`).join(", ") }}{{ r.boletos?.length > 1 ? ` · ${r.boletos.length} boletos` : r.boleto ? ` · boleto ${moeda(r.boleto.valor)}` : "" }}</template>
 					</span>
 				</li>
 			</ul>

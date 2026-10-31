@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "BOL-.YYYY.-.#####",
- "creation": "2026-10-31 12:00:00.000000",
+ "creation": "2026-11-01 09:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -15,6 +15,9 @@
   "ambiente",
   "cb1",
   "valor",
+  "parcela",
+  "payment_term",
+  "valor_retencao",
   "emissao",
   "vencimento",
   "multa_percentual",
@@ -100,6 +103,24 @@
    "in_list_view": 1,
    "label": "Valor",
    "reqd": 1
+  },
+  {
+   "description": "Ex.: 2/3 quando a fatura é parcelada",
+   "fieldname": "parcela",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Parcela"
+  },
+  {
+   "fieldname": "payment_term",
+   "fieldtype": "Data",
+   "label": "Condição de Pagamento da Parcela"
+  },
+  {
+   "description": "Parte dos impostos retidos pelo cliente que este boleto já desconta",
+   "fieldname": "valor_retencao",
+   "fieldtype": "Currency",
+   "label": "Retenção Abatida nesta Parcela"
   },
   {
    "fieldname": "emissao",
@@ -206,7 +227,7 @@
   }
  ],
  "links": [],
- "modified": "2026-10-31 12:00:00.000000",
+ "modified": "2026-11-01 09:00:00.000000",
  "modified_by": "Administrator",
  "module": "Fiscal",
  "name": "Boleto Cobranca",

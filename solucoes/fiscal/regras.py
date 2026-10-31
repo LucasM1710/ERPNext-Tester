@@ -227,25 +227,62 @@ def planejar_fatura(fatura):
 
 
 def _planejar_boleto(si, documentos, cfg):
-	ativo = frappe.db.get_value("Boleto Cobranca", {"fatura": si.name, "status": ["in", ["Em aberto", "Vencido", "Pago"]]},
-	                            ["name", "valor", "vencimento", "status"], as_dict=True)  # fmt: skip
-	if ativo:
-		return {"ja_emitido": ativo, "valor": flt(ativo.valor), "vencimento": str(ativo.vencimento), "resumo": f"Boleto {ativo.name} já emitido."}
+	"""Um boleto por parcela das condições de pagamento da fatura (ou um só, se não for parcelada).
+
+	Retenções do cliente: abatidas proporcionalmente em cada parcela (confirme a regra com o contador).
+	"""
+	ativos = frappe.get_all("Boleto Cobranca", filters={"fatura": si.name, "status": ["in", ["Em aberto", "Vencido", "Pago"]]},
+	                        fields=["name", "valor", "vencimento", "status", "parcela"], order_by="vencimento asc")  # fmt: skip
+	if ativos:
+		texto = f"Boleto {ativos[0].name} já emitido." if len(ativos) == 1 else f"{len(ativos)} boletos (parcelas) já emitidos."
+		return {"ja_emitido": ativos[0], "valor": sum(flt(b.valor) for b in ativos), "vencimento": str(ativos[0].vencimento), "resumo": texto, "parcelas": []}
 	if flt(si.outstanding_amount) <= 0 or not documentos:
 		return None
 	geram = [d for d in documentos if d["natureza"] and frappe.get_cached_value("Natureza Operacao Fiscal", d["natureza"], "gera_boleto")]
 	if not geram:
 		return None
 	retencoes = flt(sum(d["valores"].get("valor_retencoes") or 0 for d in documentos), 2)
-	valor = flt(flt(si.outstanding_amount) - retencoes, 2)
-	if valor <= 0:
+	hoje = getdate(today())
+	reserva = getdate(add_days(today(), cfg.dias_vencimento or 10))
+
+	agenda = list(si.get("payment_schedule") or [])
+	total_parcelas = len(agenda)
+	linhas = []  # (rótulo, condição, vencimento original, valor em aberto)
+	for n, p in enumerate(agenda, 1):
+		aberto = flt(p.get("outstanding")) if p.get("outstanding") is not None else flt(p.payment_amount) - flt(p.get("paid_amount"))
+		if aberto > 0.009:
+			linhas.append((f"{n}/{total_parcelas}" if total_parcelas > 1 else None, p.payment_term, getdate(p.due_date), flt(aberto, 2)))
+	if not linhas:
+		linhas = [(None, None, getdate(si.due_date) if si.due_date else hoje, flt(si.outstanding_amount))]
+	# a soma das parcelas precisa bater com o saldo da fatura (arredondamentos ficam na última)
+	linhas[-1] = (*linhas[-1][:3], flt(linhas[-1][3] + flt(si.outstanding_amount) - sum(x[3] for x in linhas), 2))
+
+	bruto_total = sum(x[3] for x in linhas)
+	parcelas, retido_ate_agora, vencidas = [], 0, 0
+	for k, (rotulo, condicao, venc, bruto) in enumerate(linhas):
+		ret = flt(retencoes - retido_ate_agora, 2) if k == len(linhas) - 1 else flt(retencoes * bruto / bruto_total, 2)
+		retido_ate_agora += ret
+		if venc <= hoje:
+			vencidas += 1
+			venc = reserva
+		parcelas.append({"parcela": rotulo, "payment_term": condicao, "vencimento": str(venc), "valor": flt(bruto - ret, 2), "valor_retencao": ret})
+	parcelas = [p for p in parcelas if p["valor"] > 0]
+	if not parcelas:
 		return None
-	venc = getdate(si.due_date) if si.due_date and getdate(si.due_date) > getdate(today()) else getdate(add_days(today(), cfg.dias_vencimento or 10))
-	texto = f"Boleto de {util.moeda(valor)} com vencimento em {venc.strftime('%d/%m/%Y')}"
+	valor = flt(sum(p["valor"] for p in parcelas), 2)
+	data = lambda v: getdate(v).strftime("%d/%m/%Y")  # noqa: E731
+	if len(parcelas) == 1:
+		texto = f"Boleto de {util.moeda(valor)} com vencimento em {data(parcelas[0]['vencimento'])}"
+	else:
+		texto = f"{len(parcelas)} boletos, um por parcela: " + ", ".join(f"{p['parcela']} de {util.moeda(p['valor'])} em {data(p['vencimento'])}" for p in parcelas)
+		texto += f" (total {util.moeda(valor)})"
 	if retencoes:
-		texto += f" (fatura de {util.moeda(si.outstanding_amount)} menos {util.moeda(retencoes)} que o cliente retém e recolhe)"
+		texto += f". A fatura de {util.moeda(si.outstanding_amount)} já desconta {util.moeda(retencoes)} que o cliente retém e recolhe"
+		texto += ", divididos entre as parcelas" if len(parcelas) > 1 else ""
+	if vencidas:
+		texto += f". {vencidas} vencimento(s) da fatura já passou(aram): esse(s) boleto(s) sai(em) para {data(reserva)}"
 	texto += ", com Pix no mesmo boleto." if cfg.chave_pix or simulacao(cfg) else "."
-	return {"valor": valor, "vencimento": str(venc), "retencoes": retencoes, "resumo": texto, "ja_emitido": None}
+	return {"valor": valor, "vencimento": parcelas[0]["vencimento"], "retencoes": retencoes, "parcelas": parcelas, "resumo": texto, "ja_emitido": None}
 
 
 def _texto_servico(v, cfg, df):

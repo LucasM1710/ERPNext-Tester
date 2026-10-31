@@ -59,6 +59,71 @@ def criar():
 	print("Demo fiscal criada. Abra /fiscal.")
 
 
+CONDICOES = {  # modelo -> [(condição, % da fatura, dias)]
+	"3x 30/60/90": [("Parcela 30 dias", 33.33, 30), ("Parcela 60 dias", 33.33, 60), ("Parcela 90 dias", 33.34, 90)],
+	"2x 30/60": [("Parcela 30 dias (2x)", 50, 30), ("Parcela 60 dias (2x)", 50, 60)],
+}
+OMEGA = "Construtora Ômega Demo"
+
+
+def parcelado():
+	"""Faturas PARCELADAS para testar um boleto por parcela (só em Simulação).
+
+	bench --site erp.localhost execute solucoes.fiscal.demo.parcelado
+
+	- Condições de pagamento "3x 30/60/90" e "2x 30/60" (o recebimento é lançado por parcela);
+	- cliente completo "Construtora Ômega Demo" (endereço no ERP, cadastro fiscal, 3x como condição padrão);
+	- fatura de R$ 4.700,00 em 3x para a Ômega e fatura de R$ 1.900,00 em 2x para a Metalúrgica Beta (retém impostos).
+	Pode rodar mais de uma vez: cada vez cria duas faturas novas.
+	"""
+	if frappe.db.get_single_value("Configuracao Fiscal", "ambiente") != "Simulação":
+		print("RECUSADO: a Configuração Fiscal não está em Simulação.")
+		return
+	if not frappe.db.exists("Item", "SRV-CAL-BAL"):
+		print("Rode antes a demo fiscal (solucoes.fiscal.demo.criar): ela cria os itens e os dados da empresa.")
+		return
+	for modelo, linhas in CONDICOES.items():
+		for nome, porcao, dias in linhas:
+			if not frappe.db.exists("Payment Term", nome):
+				frappe.get_doc({"doctype": "Payment Term", "payment_term_name": nome, "invoice_portion": porcao,
+				                "due_date_based_on": "Day(s) after invoice date", "credit_days": dias}).insert(ignore_permissions=True)  # fmt: skip
+		if not frappe.db.exists("Payment Terms Template", modelo):
+			frappe.get_doc({"doctype": "Payment Terms Template", "template_name": modelo, "allocate_payment_based_on_payment_terms": 1,
+			                "terms": [{"payment_term": n, "invoice_portion": p, "due_date_based_on": "Day(s) after invoice date", "credit_days": d} for n, p, d in linhas]}).insert(ignore_permissions=True)  # fmt: skip
+
+	if not frappe.db.exists("Customer", OMEGA):
+		cnpj = util.formatar_documento(util.completar_cnpj("330412870001"))
+		frappe.get_doc({"doctype": "Customer", "customer_name": OMEGA, "customer_type": "Company", "tax_id": cnpj, "payment_terms": "3x 30/60/90"}).insert(ignore_permissions=True)
+		frappe.get_doc({"doctype": "Address", "address_title": OMEGA, "address_type": "Billing", "address_line1": "Avenida das Obras, 2500", "city": "Campinas",
+		                "state": "SP", "pincode": "13087-000", "country": "Brazil", "email_id": "financeiro@omega.demo", "is_primary_address": 1,
+		                "links": [{"link_doctype": "Customer", "link_name": OMEGA}]}).insert(ignore_permissions=True)  # fmt: skip
+		frappe.get_doc({"doctype": "Dados Fiscais Parte", "tipo_parte": "Customer", "parte": OMEGA, "razao_social": "Construtora Ômega Ltda (demo)",
+		                "tipo_pessoa": "Jurídica", "cnpj_cpf": cnpj, "contribuinte_icms": "Não contribuinte", "inscricao_municipal": "998877-1",
+		                "email_nota": "financeiro@omega.demo", "logradouro": "Avenida das Obras", "numero": "2500", "bairro": "Parque Industrial",
+		                "cep": "13087-000", "municipio": "Campinas", "codigo_municipio": "3509502", "uf": "SP", "observacao": MARCA}).insert(ignore_permissions=True)  # fmt: skip
+
+	criadas = [
+		_fatura_parcelada(OMEGA, [("SRV-CAL-MAN", 20), ("SRV-MANUT", 4), ("SRV-CAL-BAL", 5)], None),  # usa a condição padrão do cliente (3x)
+		_fatura_parcelada("Metalúrgica Beta Demo", [("SRV-CAL-MAN", 10), ("SRV-MANUT", 2)], "2x 30/60"),
+	]
+	frappe.db.commit()
+	for si in criadas:
+		print(f"{si.name} · {si.customer} · R$ {si.grand_total:.2f} · " + ", ".join(f"{p.payment_term} R$ {p.payment_amount:.2f} vence {p.due_date}" for p in si.payment_schedule))
+	print("Abra /fiscal: as duas faturas estão em Para emitir.")
+
+
+def _fatura_parcelada(cliente, itens, condicao):
+	precos = {c: p for c, _n, p, *_ in SERVICOS + PRODUTOS}
+	si = frappe.get_doc({
+		"doctype": "Sales Invoice", "customer": cliente, "company": frappe.db.get_single_value("Configuracao Fiscal", "empresa"),
+		"payment_terms_template": condicao or frappe.db.get_value("Customer", cliente, "payment_terms"),
+		"items": [{"item_code": c, "qty": q, "rate": precos[c]} for c, q in itens], "remarks": MARCA,
+	})  # fmt: skip
+	si.insert(ignore_permissions=True)
+	si.submit()
+	return si
+
+
 def apagar():
 	"""Remove tudo o que a demo criou (faturas e recebimentos são cancelados antes) e zera a numeração.
 
@@ -84,7 +149,7 @@ def apagar():
 		if si.docstatus == 1:
 			si.cancel()
 		frappe.delete_doc("Sales Invoice", nome, force=True, ignore_permissions=True)
-	partes = [*CLIENTES, "Laticínios Delta Demo", "Laboratório Externo de Calibração Demo"]
+	partes = [*CLIENTES, "Laticínios Delta Demo", "Laboratório Externo de Calibração Demo", OMEGA]
 	for nome in frappe.get_all("Dados Fiscais Parte", or_filters={"observacao": MARCA, "parte": ["in", partes]}, pluck="name"):
 		frappe.delete_doc("Dados Fiscais Parte", nome, force=True, ignore_permissions=True)
 	for codigo, *_ in SERVICOS + PRODUTOS:
