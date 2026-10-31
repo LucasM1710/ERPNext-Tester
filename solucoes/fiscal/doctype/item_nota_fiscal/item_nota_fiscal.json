@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "descricao",
+  "ncm",
+  "cfop",
+  "unidade",
+  "quantidade",
+  "valor_unitario",
+  "valor_total",
+  "numero_serie",
+  "referencia"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "columns": 3,
+   "fieldname": "descricao",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Descrição",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "ncm",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "NCM"
+  },
+  {
+   "columns": 1,
+   "fieldname": "cfop",
+   "fieldtype": "Data",
+   "label": "CFOP"
+  },
+  {
+   "default": "UN",
+   "fieldname": "unidade",
+   "fieldtype": "Data",
+   "label": "Unidade"
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "quantidade",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantidade"
+  },
+  {
+   "columns": 1,
+   "fieldname": "valor_unitario",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor Unitário"
+  },
+  {
+   "columns": 1,
+   "fieldname": "valor_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor Total"
+  },
+  {
+   "fieldname": "numero_serie",
+   "fieldtype": "Data",
+   "label": "Número de Série"
+  },
+  {
+   "description": "Equipamento, padrão ou linha da fatura de origem",
+   "fieldname": "referencia",
+   "fieldtype": "Data",
+   "label": "Referência"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Item Nota Fiscal",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

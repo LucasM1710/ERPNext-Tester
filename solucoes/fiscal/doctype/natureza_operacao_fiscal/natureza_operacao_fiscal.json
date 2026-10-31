@@ -1,0 +1,164 @@
+{
+ "actions": [],
+ "autoname": "field:nome",
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "nome",
+  "documento",
+  "tipo",
+  "explicacao",
+  "cb1",
+  "cfop_dentro_estado",
+  "cfop_fora_estado",
+  "csosn",
+  "cst_icms",
+  "icms_tributado",
+  "gera_boleto",
+  "exige_nf_referenciada",
+  "controla_retorno",
+  "texto_complementar",
+  "ativo"
+ ],
+ "fields": [
+  {
+   "fieldname": "nome",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "documento",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Documento",
+   "options": "NF-e\nNFS-e",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tipo",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tipo",
+   "options": "Venda\nServiço\nRemessa\nRetorno",
+   "reqd": 1
+  },
+  {
+   "description": "Aparece para quem emite, para escolher a opção certa",
+   "fieldname": "explicacao",
+   "fieldtype": "Small Text",
+   "label": "Explicação (em linguagem simples)"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cfop_dentro_estado",
+   "fieldtype": "Data",
+   "label": "CFOP Dentro do Estado"
+  },
+  {
+   "fieldname": "cfop_fora_estado",
+   "fieldtype": "Data",
+   "label": "CFOP Fora do Estado"
+  },
+  {
+   "fieldname": "csosn",
+   "fieldtype": "Data",
+   "label": "CSOSN (Simples Nacional)"
+  },
+  {
+   "fieldname": "cst_icms",
+   "fieldtype": "Data",
+   "label": "CST do ICMS (Regime Normal)"
+  },
+  {
+   "fieldname": "icms_tributado",
+   "fieldtype": "Check",
+   "label": "Destaca ICMS"
+  },
+  {
+   "fieldname": "gera_boleto",
+   "fieldtype": "Check",
+   "label": "Gera Boleto"
+  },
+  {
+   "description": "Retorno: informar a chave da nota com que o equipamento chegou",
+   "fieldname": "exige_nf_referenciada",
+   "fieldtype": "Check",
+   "label": "Exige a Nota de Origem"
+  },
+  {
+   "description": "Remessa: fica em Remessas em aberto até voltar",
+   "fieldname": "controla_retorno",
+   "fieldtype": "Check",
+   "label": "Acompanhar Retorno"
+  },
+  {
+   "description": "Use {nf_referenciada} e {prazo}",
+   "fieldname": "texto_complementar",
+   "fieldtype": "Small Text",
+   "label": "Texto Complementar"
+  },
+  {
+   "default": "1",
+   "fieldname": "ativo",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Ativo"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Natureza Operacao Fiscal",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

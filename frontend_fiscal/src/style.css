@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/* Modo escuro pela classe .dark no <html> (segue o sistema; o usuário pode trocar) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+	/* marca do Fiscal: verde-azulado */
+	--color-marca-50: #f0fdfa;
+	--color-marca-100: #ccfbf1;
+	--color-marca-200: #99f6e4;
+	--color-marca-300: #5eead4;
+	--color-marca-400: #2dd4bf;
+	--color-marca-500: #14b8a6;
+	--color-marca-600: #0d9488;
+	--color-marca-700: #0f766e;
+	--color-marca-800: #115e59;
+	--color-marca-900: #134e4a;
+
+	/* superfícies e textos: variam com o tema */
+	--color-fundo: var(--fundo);
+	--color-superficie: var(--superficie);
+	--color-elevada: var(--elevada);
+	--color-realce: var(--realce);
+	--color-borda: var(--borda);
+	--color-tinta: var(--tinta);
+	--color-texto: var(--texto);
+	--color-suave: var(--suave);
+
+	--shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+	--shadow-pop: 0 18px 40px -16px rgb(15 23 42 / 0.35);
+}
+
+:root {
+	--fundo: #f5f6fa;
+	--superficie: #ffffff;
+	--elevada: #ffffff;
+	--realce: #f1f3f9;
+	--borda: #e3e6ef;
+	--tinta: #0f172a;
+	--texto: #334155;
+	--suave: #64748b;
+}
+
+.dark {
+	--fundo: #0a0c12;
+	--superficie: #11141c;
+	--elevada: #171b25;
+	--realce: #1c2130;
+	--borda: #252b3a;
+	--tinta: #f1f5f9;
+	--texto: #cbd5e1;
+	--suave: #8b95a8;
+	color-scheme: dark;
+}
+
+@layer base {
+	html {
+		-webkit-font-smoothing: antialiased;
+	}
+	body {
+		@apply bg-fundo text-texto;
+		font-feature-settings: "cv11", "ss01";
+	}
+	::selection {
+		@apply bg-marca-500/25;
+	}
+}
+
+@layer components {
+	.card {
+		@apply rounded-2xl border border-borda bg-superficie shadow-card;
+	}
+	.btn-primario,
+	.btn-secundario,
+	.btn-fantasma,
+	.btn-perigo,
+	.btn-sucesso {
+		@apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium
+			whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2
+			focus-visible:outline-marca-500 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+	.btn-primario {
+		@apply bg-marca-600 text-white shadow-sm shadow-marca-600/20 hover:bg-marca-700;
+	}
+	.btn-secundario {
+		@apply border border-borda bg-superficie text-texto shadow-sm hover:bg-realce;
+	}
+	.btn-fantasma {
+		@apply text-suave hover:bg-realce hover:text-tinta;
+	}
+	.btn-perigo {
+		@apply bg-rose-600 text-white shadow-sm hover:bg-rose-700;
+	}
+	.btn-sucesso {
+		@apply bg-emerald-600 text-white shadow-sm hover:bg-emerald-700;
+	}
+	.campo {
+		@apply w-full rounded-xl border border-borda bg-superficie px-3 py-2 text-sm text-tinta shadow-sm
+			placeholder:text-suave/70 focus:border-marca-400 focus:ring-4 focus:ring-marca-500/15 focus:outline-none;
+	}
+	.rotulo {
+		@apply mb-1.5 block text-xs font-medium text-suave;
+	}
+	.th {
+		@apply px-4 py-3 text-left text-[11px] font-semibold tracking-wider text-suave uppercase;
+	}
+	.td {
+		@apply px-4 py-3 text-sm;
+	}
+	.chip {
+		@apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition;
+	}
+	/* conteúdo HTML vindo do editor/e-mail */
+	.conteudo :where(p) {
+		@apply my-1.5;
+	}
+	.conteudo :where(a) {
+		@apply text-marca-600 underline dark:text-marca-400;
+	}
+	.conteudo :where(ul, ol) {
+		@apply my-1.5 pl-5;
+	}
+	.conteudo :where(ul) {
+		@apply list-disc;
+	}
+	.conteudo :where(img) {
+		@apply my-2 max-h-80 rounded-lg;
+	}
+	.conteudo :where(blockquote) {
+		@apply border-l-2 border-borda pl-3 text-suave;
+	}
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.18s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
+.slide-enter-active,
+.slide-leave-active {
+	transition: all 0.2s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+	opacity: 0;
+	transform: translateY(8px) scale(0.98);
+}

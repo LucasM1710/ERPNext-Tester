@@ -1,0 +1,578 @@
+{
+ "actions": [],
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_ambiente",
+  "ambiente",
+  "provedor_notas",
+  "provedor_token",
+  "provedor_boleto",
+  "boleto_credencial",
+  "cb_amb",
+  "certificado_a1",
+  "certificado_senha",
+  "certificado_validade",
+  "simulacao_falha_percentual",
+  "sec_emitente",
+  "empresa",
+  "razao_social",
+  "nome_fantasia",
+  "cnpj",
+  "inscricao_estadual",
+  "inscricao_municipal",
+  "regime_tributario",
+  "cnae",
+  "telefone",
+  "email",
+  "cb_emit",
+  "logradouro",
+  "numero",
+  "complemento",
+  "bairro",
+  "cep",
+  "municipio",
+  "codigo_municipio",
+  "uf",
+  "sec_nfse",
+  "codigo_servico_nacional",
+  "item_lista_servico",
+  "codigo_nbs",
+  "aliquota_iss",
+  "descricao_padrao_servico",
+  "cb_nfse",
+  "serie_dps",
+  "proximo_numero_dps",
+  "aliquota_pis",
+  "aliquota_cofins",
+  "aliquota_csll",
+  "aliquota_ir",
+  "sec_nfe",
+  "serie_nfe",
+  "proximo_numero_nfe",
+  "aliquota_icms_interna",
+  "aliquota_icms_interestadual",
+  "cb_nfe",
+  "informacoes_complementares",
+  "prazo_retorno_remessa_dias",
+  "sec_reforma",
+  "destacar_ibs_cbs",
+  "aliquota_cbs",
+  "aliquota_ibs",
+  "sec_boleto",
+  "banco_nome",
+  "banco_codigo",
+  "agencia",
+  "conta",
+  "carteira",
+  "chave_pix",
+  "proximo_nosso_numero",
+  "cb_bol",
+  "dias_vencimento",
+  "multa_percentual",
+  "juros_mes_percentual",
+  "instrucoes_boleto",
+  "conta_recebimento",
+  "conta_retencoes",
+  "sec_auto",
+  "data_inicio",
+  "emitir_ao_confirmar_fatura",
+  "enviar_email_cliente",
+  "cb_auto",
+  "lembrete_dias_antes",
+  "cobranca_dias_depois"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_ambiente",
+   "fieldtype": "Section Break",
+   "label": "Ambiente"
+  },
+  {
+   "default": "Simulação",
+   "description": "Simulação: tudo acontece só aqui, sem valor fiscal. Homologação: testes no provedor/SEFAZ (sem valor fiscal). Produção: notas e boletos reais.",
+   "fieldname": "ambiente",
+   "fieldtype": "Select",
+   "label": "Ambiente",
+   "options": "Simulação\nHomologação\nProdução"
+  },
+  {
+   "default": "Simulador",
+   "fieldname": "provedor_notas",
+   "fieldtype": "Select",
+   "label": "Provedor de Notas",
+   "options": "Simulador\nFocus NFe\nPlugNotas\nNuvem Fiscal\nNFE.io"
+  },
+  {
+   "fieldname": "provedor_token",
+   "fieldtype": "Password",
+   "label": "Token do Provedor de Notas"
+  },
+  {
+   "default": "Simulador",
+   "fieldname": "provedor_boleto",
+   "fieldtype": "Select",
+   "label": "Provedor de Boletos",
+   "options": "Simulador\nAPI do Banco\nAsaas\nEfí"
+  },
+  {
+   "fieldname": "boleto_credencial",
+   "fieldtype": "Password",
+   "label": "Credencial do Provedor de Boletos"
+  },
+  {
+   "fieldname": "cb_amb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Exigido para homologação e produção. Não é usado na simulação.",
+   "fieldname": "certificado_a1",
+   "fieldtype": "Attach",
+   "label": "Certificado Digital A1 (.pfx)"
+  },
+  {
+   "fieldname": "certificado_senha",
+   "fieldtype": "Password",
+   "label": "Senha do Certificado"
+  },
+  {
+   "fieldname": "certificado_validade",
+   "fieldtype": "Date",
+   "label": "Validade do Certificado"
+  },
+  {
+   "default": "0",
+   "description": "Para treinar a equipe: parte das emissões simuladas volta rejeitada (ex.: 10).",
+   "fieldname": "simulacao_falha_percentual",
+   "fieldtype": "Int",
+   "label": "Simulação: % de Rejeições Aleatórias"
+  },
+  {
+   "fieldname": "sec_emitente",
+   "fieldtype": "Section Break",
+   "label": "Emitente (sua empresa)"
+  },
+  {
+   "fieldname": "empresa",
+   "fieldtype": "Link",
+   "label": "Empresa",
+   "options": "Company"
+  },
+  {
+   "fieldname": "razao_social",
+   "fieldtype": "Data",
+   "label": "Razão Social"
+  },
+  {
+   "fieldname": "nome_fantasia",
+   "fieldtype": "Data",
+   "label": "Nome Fantasia"
+  },
+  {
+   "fieldname": "cnpj",
+   "fieldtype": "Data",
+   "label": "CNPJ"
+  },
+  {
+   "fieldname": "inscricao_estadual",
+   "fieldtype": "Data",
+   "label": "Inscrição Estadual"
+  },
+  {
+   "fieldname": "inscricao_municipal",
+   "fieldtype": "Data",
+   "label": "Inscrição Municipal"
+  },
+  {
+   "default": "Simples Nacional",
+   "fieldname": "regime_tributario",
+   "fieldtype": "Select",
+   "label": "Regime Tributário",
+   "options": "Simples Nacional\nLucro Presumido\nLucro Real"
+  },
+  {
+   "fieldname": "cnae",
+   "fieldtype": "Data",
+   "label": "CNAE Principal"
+  },
+  {
+   "fieldname": "telefone",
+   "fieldtype": "Data",
+   "label": "Telefone"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "E-mail",
+   "options": "Email"
+  },
+  {
+   "fieldname": "cb_emit",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "logradouro",
+   "fieldtype": "Data",
+   "label": "Logradouro"
+  },
+  {
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "label": "Número"
+  },
+  {
+   "fieldname": "complemento",
+   "fieldtype": "Data",
+   "label": "Complemento"
+  },
+  {
+   "fieldname": "bairro",
+   "fieldtype": "Data",
+   "label": "Bairro"
+  },
+  {
+   "fieldname": "cep",
+   "fieldtype": "Data",
+   "label": "CEP"
+  },
+  {
+   "fieldname": "municipio",
+   "fieldtype": "Data",
+   "label": "Município"
+  },
+  {
+   "description": "7 dígitos (ex.: 3509502 = Campinas/SP)",
+   "fieldname": "codigo_municipio",
+   "fieldtype": "Data",
+   "label": "Código IBGE do Município"
+  },
+  {
+   "fieldname": "uf",
+   "fieldtype": "Data",
+   "label": "UF",
+   "length": 2
+  },
+  {
+   "fieldname": "sec_nfse",
+   "fieldtype": "Section Break",
+   "label": "NFS-e (serviços)"
+  },
+  {
+   "description": "6 dígitos do serviço na NFS-e Nacional. Confirme com o contador.",
+   "fieldname": "codigo_servico_nacional",
+   "fieldtype": "Data",
+   "label": "Código de Tributação Nacional (cTribNac)"
+  },
+  {
+   "fieldname": "item_lista_servico",
+   "fieldtype": "Data",
+   "label": "Item da Lista de Serviços (LC 116)"
+  },
+  {
+   "fieldname": "codigo_nbs",
+   "fieldtype": "Data",
+   "label": "Código NBS"
+  },
+  {
+   "default": "2",
+   "fieldname": "aliquota_iss",
+   "fieldtype": "Percent",
+   "label": "Alíquota de ISS"
+  },
+  {
+   "default": "Serviços de calibração e manutenção de equipamentos conforme fatura {fatura}.",
+   "fieldname": "descricao_padrao_servico",
+   "fieldtype": "Small Text",
+   "label": "Discriminação Padrão do Serviço"
+  },
+  {
+   "fieldname": "cb_nfse",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "serie_dps",
+   "fieldtype": "Data",
+   "label": "Série da DPS"
+  },
+  {
+   "default": "1",
+   "fieldname": "proximo_numero_dps",
+   "fieldtype": "Int",
+   "label": "Próximo Número da NFS-e"
+  },
+  {
+   "default": "0.65",
+   "fieldname": "aliquota_pis",
+   "fieldtype": "Percent",
+   "label": "Retenção de PIS"
+  },
+  {
+   "default": "3",
+   "fieldname": "aliquota_cofins",
+   "fieldtype": "Percent",
+   "label": "Retenção de COFINS"
+  },
+  {
+   "default": "1",
+   "fieldname": "aliquota_csll",
+   "fieldtype": "Percent",
+   "label": "Retenção de CSLL"
+  },
+  {
+   "default": "1.5",
+   "fieldname": "aliquota_ir",
+   "fieldtype": "Percent",
+   "label": "Retenção de IR"
+  },
+  {
+   "fieldname": "sec_nfe",
+   "fieldtype": "Section Break",
+   "label": "NF-e (produtos, remessa e retorno)"
+  },
+  {
+   "default": "1",
+   "fieldname": "serie_nfe",
+   "fieldtype": "Int",
+   "label": "Série da NF-e"
+  },
+  {
+   "default": "1",
+   "fieldname": "proximo_numero_nfe",
+   "fieldtype": "Int",
+   "label": "Próximo Número da NF-e"
+  },
+  {
+   "default": "18",
+   "fieldname": "aliquota_icms_interna",
+   "fieldtype": "Percent",
+   "label": "ICMS Interno"
+  },
+  {
+   "default": "12",
+   "fieldname": "aliquota_icms_interestadual",
+   "fieldtype": "Percent",
+   "label": "ICMS Interestadual"
+  },
+  {
+   "fieldname": "cb_nfe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Documento emitido por ME ou EPP optante pelo Simples Nacional. Não gera direito a crédito fiscal de IPI.",
+   "fieldname": "informacoes_complementares",
+   "fieldtype": "Small Text",
+   "label": "Informações Complementares (todas as NF-e)"
+  },
+  {
+   "default": "180",
+   "description": "Usado para avisar quando um equipamento enviado está demorando a voltar. Confira o prazo do seu estado com o contador.",
+   "fieldname": "prazo_retorno_remessa_dias",
+   "fieldtype": "Int",
+   "label": "Prazo de Retorno das Remessas (dias)"
+  },
+  {
+   "fieldname": "sec_reforma",
+   "fieldtype": "Section Break",
+   "label": "Reforma tributária (2026)"
+  },
+  {
+   "default": "1",
+   "fieldname": "destacar_ibs_cbs",
+   "fieldtype": "Check",
+   "label": "Destacar IBS/CBS (informativo)"
+  },
+  {
+   "default": "0.9",
+   "fieldname": "aliquota_cbs",
+   "fieldtype": "Percent",
+   "label": "Alíquota CBS (teste 2026)"
+  },
+  {
+   "default": "0.1",
+   "fieldname": "aliquota_ibs",
+   "fieldtype": "Percent",
+   "label": "Alíquota IBS (teste 2026)"
+  },
+  {
+   "fieldname": "sec_boleto",
+   "fieldtype": "Section Break",
+   "label": "Boleto e Pix"
+  },
+  {
+   "default": "Banco Simulado",
+   "fieldname": "banco_nome",
+   "fieldtype": "Data",
+   "label": "Banco"
+  },
+  {
+   "default": "000",
+   "fieldname": "banco_codigo",
+   "fieldtype": "Data",
+   "label": "Código do Banco"
+  },
+  {
+   "default": "0001",
+   "fieldname": "agencia",
+   "fieldtype": "Data",
+   "label": "Agência"
+  },
+  {
+   "default": "1234567",
+   "fieldname": "conta",
+   "fieldtype": "Data",
+   "label": "Conta"
+  },
+  {
+   "default": "09",
+   "fieldname": "carteira",
+   "fieldtype": "Data",
+   "label": "Carteira"
+  },
+  {
+   "fieldname": "chave_pix",
+   "fieldtype": "Data",
+   "label": "Chave Pix"
+  },
+  {
+   "default": "1",
+   "fieldname": "proximo_nosso_numero",
+   "fieldtype": "Int",
+   "label": "Próximo Nosso Número"
+  },
+  {
+   "fieldname": "cb_bol",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "description": "Usado quando a fatura não tem data de vencimento futura",
+   "fieldname": "dias_vencimento",
+   "fieldtype": "Int",
+   "label": "Dias para Vencimento"
+  },
+  {
+   "default": "2",
+   "fieldname": "multa_percentual",
+   "fieldtype": "Percent",
+   "label": "Multa por Atraso"
+  },
+  {
+   "default": "1",
+   "fieldname": "juros_mes_percentual",
+   "fieldtype": "Percent",
+   "label": "Juros ao Mês"
+  },
+  {
+   "default": "Após o vencimento, cobrar multa e juros. Não receber após 60 dias do vencimento.",
+   "fieldname": "instrucoes_boleto",
+   "fieldtype": "Small Text",
+   "label": "Instruções do Boleto"
+  },
+  {
+   "description": "Onde o ERP lança o valor recebido do boleto",
+   "fieldname": "conta_recebimento",
+   "fieldtype": "Link",
+   "label": "Conta de Recebimento (Banco)",
+   "options": "Account"
+  },
+  {
+   "description": "Recebe a diferença entre a fatura e o boleto quando o cliente retém ISS ou impostos federais",
+   "fieldname": "conta_retencoes",
+   "fieldtype": "Link",
+   "label": "Conta de Impostos Retidos pelo Cliente",
+   "options": "Account"
+  },
+  {
+   "fieldname": "sec_auto",
+   "fieldtype": "Section Break",
+   "label": "Automação"
+  },
+  {
+   "description": "Faturas anteriores não aparecem em Para emitir",
+   "fieldname": "data_inicio",
+   "fieldtype": "Date",
+   "label": "Considerar Faturas a Partir de"
+  },
+  {
+   "default": "0",
+   "description": "Se a conferência estiver toda verde, a nota e o boleto saem no momento em que a fatura é confirmada.",
+   "fieldname": "emitir_ao_confirmar_fatura",
+   "fieldtype": "Check",
+   "label": "Emitir Sozinho ao Confirmar a Fatura"
+  },
+  {
+   "default": "1",
+   "description": "Na simulação o e-mail não sai: só fica registrado no histórico.",
+   "fieldname": "enviar_email_cliente",
+   "fieldtype": "Check",
+   "label": "Enviar Nota e Boleto por E-mail"
+  },
+  {
+   "fieldname": "cb_auto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "3",
+   "fieldname": "lembrete_dias_antes",
+   "fieldtype": "Int",
+   "label": "Lembrete ao Cliente (dias antes do vencimento)"
+  },
+  {
+   "default": "1",
+   "fieldname": "cobranca_dias_depois",
+   "fieldtype": "Int",
+   "label": "Cobrança (dias depois do vencimento)"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Configuracao Fiscal",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

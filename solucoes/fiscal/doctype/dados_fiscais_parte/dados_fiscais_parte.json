@@ -1,0 +1,217 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tipo_parte",
+  "parte",
+  "razao_social",
+  "tipo_pessoa",
+  "cnpj_cpf",
+  "contribuinte_icms",
+  "inscricao_estadual",
+  "inscricao_municipal",
+  "email_nota",
+  "cb1",
+  "logradouro",
+  "numero",
+  "complemento",
+  "bairro",
+  "cep",
+  "municipio",
+  "codigo_municipio",
+  "uf",
+  "sec_ret",
+  "iss_retido",
+  "retem_impostos_federais",
+  "cb2",
+  "observacao"
+ ],
+ "fields": [
+  {
+   "default": "Customer",
+   "fieldname": "tipo_parte",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tipo",
+   "options": "Customer\nSupplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parte",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cliente / Fornecedor",
+   "options": "tipo_parte",
+   "reqd": 1
+  },
+  {
+   "fieldname": "razao_social",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Razão Social / Nome"
+  },
+  {
+   "default": "Jurídica",
+   "fieldname": "tipo_pessoa",
+   "fieldtype": "Select",
+   "label": "Pessoa",
+   "options": "Jurídica\nFísica"
+  },
+  {
+   "fieldname": "cnpj_cpf",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "CNPJ / CPF"
+  },
+  {
+   "default": "Não contribuinte",
+   "fieldname": "contribuinte_icms",
+   "fieldtype": "Select",
+   "label": "Contribuinte de ICMS",
+   "options": "Não contribuinte\nContribuinte\nIsento"
+  },
+  {
+   "fieldname": "inscricao_estadual",
+   "fieldtype": "Data",
+   "label": "Inscrição Estadual"
+  },
+  {
+   "fieldname": "inscricao_municipal",
+   "fieldtype": "Data",
+   "label": "Inscrição Municipal"
+  },
+  {
+   "fieldname": "email_nota",
+   "fieldtype": "Data",
+   "label": "E-mail para Notas e Boletos",
+   "options": "Email"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "logradouro",
+   "fieldtype": "Data",
+   "label": "Logradouro"
+  },
+  {
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "label": "Número"
+  },
+  {
+   "fieldname": "complemento",
+   "fieldtype": "Data",
+   "label": "Complemento"
+  },
+  {
+   "fieldname": "bairro",
+   "fieldtype": "Data",
+   "label": "Bairro"
+  },
+  {
+   "fieldname": "cep",
+   "fieldtype": "Data",
+   "label": "CEP"
+  },
+  {
+   "fieldname": "municipio",
+   "fieldtype": "Data",
+   "label": "Município"
+  },
+  {
+   "description": "7 dígitos (ex.: 3509502 = Campinas/SP)",
+   "fieldname": "codigo_municipio",
+   "fieldtype": "Data",
+   "label": "Código IBGE do Município"
+  },
+  {
+   "fieldname": "uf",
+   "fieldtype": "Data",
+   "label": "UF",
+   "length": 2
+  },
+  {
+   "fieldname": "sec_ret",
+   "fieldtype": "Section Break",
+   "label": "Retenções feitas pelo cliente"
+  },
+  {
+   "description": "O próprio cliente recolhe o ISS; o boleto sai pelo valor líquido",
+   "fieldname": "iss_retido",
+   "fieldtype": "Check",
+   "label": "Cliente Retém o ISS"
+  },
+  {
+   "description": "Comum em empresas grandes e órgãos públicos",
+   "fieldname": "retem_impostos_federais",
+   "fieldtype": "Check",
+   "label": "Cliente Retém PIS/COFINS/CSLL/IR"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "observacao",
+   "fieldtype": "Small Text",
+   "label": "Observação"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Dados Fiscais Parte",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "cnpj_cpf,razao_social",
+ "show_title_field_in_link": 0,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "razao_social",
+ "track_changes": 1
+}

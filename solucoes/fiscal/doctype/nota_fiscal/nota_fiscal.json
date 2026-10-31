@@ -1,0 +1,445 @@
+{
+ "actions": [],
+ "autoname": "NF-.YYYY.-.#####",
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tipo_documento",
+  "natureza",
+  "status",
+  "ambiente",
+  "fatura",
+  "cb1",
+  "tipo_parte",
+  "parte",
+  "nome_parte",
+  "documento_parte",
+  "uf_destino",
+  "cb2",
+  "numero",
+  "serie",
+  "chave_acesso",
+  "protocolo",
+  "data_emissao",
+  "sec_ref",
+  "nf_referenciada",
+  "nota_remessa",
+  "cb_ref",
+  "situacao_remessa",
+  "prazo_retorno",
+  "retorno_chave",
+  "retorno_data",
+  "sec_itens",
+  "itens",
+  "discriminacao",
+  "informacoes_complementares",
+  "sec_valores",
+  "cfop",
+  "valor_total",
+  "base_icms",
+  "aliquota_icms",
+  "valor_icms",
+  "aliquota_iss",
+  "valor_iss",
+  "iss_retido",
+  "cb_val",
+  "valor_pis_retido",
+  "valor_cofins_retido",
+  "valor_csll_retido",
+  "valor_ir_retido",
+  "valor_retencoes",
+  "valor_liquido",
+  "valor_cbs",
+  "valor_ibs",
+  "sec_ret",
+  "codigo_retorno",
+  "mensagem_retorno",
+  "orientacao",
+  "cb_ret",
+  "motivo_cancelamento",
+  "cancelada_em",
+  "boleto",
+  "email_enviado_em",
+  "xml",
+  "destinatario_json",
+  "sec_hist",
+  "eventos"
+ ],
+ "fields": [
+  {
+   "fieldname": "tipo_documento",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Documento",
+   "options": "NFS-e\nNF-e",
+   "reqd": 1
+  },
+  {
+   "fieldname": "natureza",
+   "fieldtype": "Link",
+   "label": "Natureza da Operação",
+   "options": "Natureza Operacao Fiscal",
+   "reqd": 1
+  },
+  {
+   "default": "Rascunho",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Situação",
+   "options": "Rascunho\nProcessando\nAutorizada\nRejeitada\nSubstituída\nCancelada"
+  },
+  {
+   "fieldname": "ambiente",
+   "fieldtype": "Data",
+   "label": "Ambiente",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fatura",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Fatura",
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Customer",
+   "fieldname": "tipo_parte",
+   "fieldtype": "Select",
+   "label": "Tipo do Destinatário",
+   "options": "Customer\nSupplier"
+  },
+  {
+   "fieldname": "parte",
+   "fieldtype": "Dynamic Link",
+   "in_standard_filter": 1,
+   "label": "Destinatário",
+   "options": "tipo_parte"
+  },
+  {
+   "fieldname": "nome_parte",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome do Destinatário"
+  },
+  {
+   "fieldname": "documento_parte",
+   "fieldtype": "Data",
+   "label": "CNPJ/CPF do Destinatário"
+  },
+  {
+   "fieldname": "uf_destino",
+   "fieldtype": "Data",
+   "label": "UF do Destinatário"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "numero",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Número"
+  },
+  {
+   "fieldname": "serie",
+   "fieldtype": "Data",
+   "label": "Série"
+  },
+  {
+   "fieldname": "chave_acesso",
+   "fieldtype": "Data",
+   "label": "Chave de Acesso"
+  },
+  {
+   "fieldname": "protocolo",
+   "fieldtype": "Data",
+   "label": "Protocolo"
+  },
+  {
+   "fieldname": "data_emissao",
+   "fieldtype": "Datetime",
+   "label": "Emitida em"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_ref",
+   "fieldtype": "Section Break",
+   "label": "Remessa e retorno"
+  },
+  {
+   "description": "Retorno: nota com que o equipamento chegou",
+   "fieldname": "nf_referenciada",
+   "fieldtype": "Data",
+   "label": "Chave da Nota de Origem"
+  },
+  {
+   "fieldname": "nota_remessa",
+   "fieldtype": "Link",
+   "label": "Remessa de Origem",
+   "options": "Nota Fiscal"
+  },
+  {
+   "fieldname": "cb_ref",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "situacao_remessa",
+   "fieldtype": "Select",
+   "label": "Situação da Remessa",
+   "options": "\nEm aberto\nRetornada"
+  },
+  {
+   "fieldname": "prazo_retorno",
+   "fieldtype": "Date",
+   "label": "Retorno Previsto até"
+  },
+  {
+   "fieldname": "retorno_chave",
+   "fieldtype": "Data",
+   "label": "Chave da Nota de Retorno"
+  },
+  {
+   "fieldname": "retorno_data",
+   "fieldtype": "Date",
+   "label": "Retornou em"
+  },
+  {
+   "fieldname": "sec_itens",
+   "fieldtype": "Section Break",
+   "label": "Itens"
+  },
+  {
+   "fieldname": "itens",
+   "fieldtype": "Table",
+   "label": "Itens",
+   "options": "Item Nota Fiscal"
+  },
+  {
+   "fieldname": "discriminacao",
+   "fieldtype": "Small Text",
+   "label": "Discriminação do Serviço"
+  },
+  {
+   "fieldname": "informacoes_complementares",
+   "fieldtype": "Small Text",
+   "label": "Informações Complementares"
+  },
+  {
+   "fieldname": "sec_valores",
+   "fieldtype": "Section Break",
+   "label": "Valores"
+  },
+  {
+   "fieldname": "cfop",
+   "fieldtype": "Data",
+   "label": "CFOP"
+  },
+  {
+   "fieldname": "valor_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor Total"
+  },
+  {
+   "fieldname": "base_icms",
+   "fieldtype": "Currency",
+   "label": "Base do ICMS"
+  },
+  {
+   "fieldname": "aliquota_icms",
+   "fieldtype": "Percent",
+   "label": "Alíquota do ICMS"
+  },
+  {
+   "fieldname": "valor_icms",
+   "fieldtype": "Currency",
+   "label": "ICMS"
+  },
+  {
+   "fieldname": "aliquota_iss",
+   "fieldtype": "Percent",
+   "label": "Alíquota do ISS"
+  },
+  {
+   "fieldname": "valor_iss",
+   "fieldtype": "Currency",
+   "label": "ISS"
+  },
+  {
+   "fieldname": "iss_retido",
+   "fieldtype": "Check",
+   "label": "ISS Retido pelo Cliente"
+  },
+  {
+   "fieldname": "cb_val",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "valor_pis_retido",
+   "fieldtype": "Currency",
+   "label": "PIS Retido"
+  },
+  {
+   "fieldname": "valor_cofins_retido",
+   "fieldtype": "Currency",
+   "label": "COFINS Retido"
+  },
+  {
+   "fieldname": "valor_csll_retido",
+   "fieldtype": "Currency",
+   "label": "CSLL Retido"
+  },
+  {
+   "fieldname": "valor_ir_retido",
+   "fieldtype": "Currency",
+   "label": "IR Retido"
+  },
+  {
+   "fieldname": "valor_retencoes",
+   "fieldtype": "Currency",
+   "label": "Total Retido pelo Cliente"
+  },
+  {
+   "fieldname": "valor_liquido",
+   "fieldtype": "Currency",
+   "label": "Valor Líquido a Receber"
+  },
+  {
+   "fieldname": "valor_cbs",
+   "fieldtype": "Currency",
+   "label": "CBS (informativo)"
+  },
+  {
+   "fieldname": "valor_ibs",
+   "fieldtype": "Currency",
+   "label": "IBS (informativo)"
+  },
+  {
+   "fieldname": "sec_ret",
+   "fieldtype": "Section Break",
+   "label": "Retorno do provedor"
+  },
+  {
+   "fieldname": "codigo_retorno",
+   "fieldtype": "Data",
+   "label": "Código"
+  },
+  {
+   "fieldname": "mensagem_retorno",
+   "fieldtype": "Small Text",
+   "label": "Mensagem"
+  },
+  {
+   "fieldname": "orientacao",
+   "fieldtype": "Small Text",
+   "label": "Como Resolver"
+  },
+  {
+   "fieldname": "cb_ret",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "motivo_cancelamento",
+   "fieldtype": "Small Text",
+   "label": "Motivo do Cancelamento"
+  },
+  {
+   "fieldname": "cancelada_em",
+   "fieldtype": "Datetime",
+   "label": "Cancelada em"
+  },
+  {
+   "fieldname": "boleto",
+   "fieldtype": "Link",
+   "label": "Boleto",
+   "options": "Boleto Cobranca"
+  },
+  {
+   "fieldname": "email_enviado_em",
+   "fieldtype": "Datetime",
+   "label": "E-mail Enviado em"
+  },
+  {
+   "fieldname": "xml",
+   "fieldtype": "Attach",
+   "label": "XML"
+  },
+  {
+   "fieldname": "destinatario_json",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Dados do Destinatário na Emissão"
+  },
+  {
+   "fieldname": "sec_hist",
+   "fieldtype": "Section Break",
+   "label": "Histórico"
+  },
+  {
+   "fieldname": "eventos",
+   "fieldtype": "Table",
+   "label": "Eventos",
+   "options": "Evento Fiscal"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Nota Fiscal",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "numero,nome_parte,fatura",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "nome_parte",
+ "track_changes": 1
+}

@@ -82,12 +82,18 @@ website_route_rules = [
 	{"from_route": "/consulta/<path:app_path>", "to_route": "consulta"},
 	# Central de TI (módulo Central TI): todas as sub-rotas de /ti servem a mesma página
 	{"from_route": "/ti/<path:app_path>", "to_route": "ti"},
+	# Fiscal (notas e boletos): todas as sub-rotas de /fiscal servem a mesma página
+	{"from_route": "/fiscal/<path:app_path>", "to_route": "fiscal"},
 ]
 
 # Central de TI: e-mails recebidos pela conta da TI (Append To = Chamado TI) entram na conversa do chamado
 doc_events = {
 	"Communication": {
 		"after_insert": "solucoes.central_ti.email.ao_receber_email",
+	},
+	# Fiscal: emissão automática ao confirmar a fatura (só se ligada na Configuracao Fiscal)
+	"Sales Invoice": {
+		"on_submit": "solucoes.fiscal.emissao.ao_confirmar_fatura",
 	},
 }
 
@@ -209,6 +215,8 @@ scheduler_events = {
 	"daily": [
 		"solucoes.metrologia.utils.atualizar_situacao_equipamentos",
 		"solucoes.metrologia.utils.atualizar_situacao_padroes",
+		# Fiscal: boletos vencidos, lembretes e cobranças
+		"solucoes.fiscal.emissao.atualizar_boletos",
 	],
 	"weekly": [
 		"solucoes.portal.notificacoes.enviar_resumos_semanais",

@@ -1,0 +1,259 @@
+{
+ "actions": [],
+ "autoname": "BOL-.YYYY.-.#####",
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "status",
+  "cliente",
+  "nome_cliente",
+  "documento_cliente",
+  "email_cliente",
+  "fatura",
+  "nota_fiscal",
+  "ambiente",
+  "cb1",
+  "valor",
+  "emissao",
+  "vencimento",
+  "multa_percentual",
+  "juros_mes_percentual",
+  "instrucoes",
+  "sec_cod",
+  "banco",
+  "nosso_numero",
+  "linha_digitavel",
+  "codigo_barras",
+  "pix_copia_cola",
+  "sec_pag",
+  "pago_em",
+  "valor_pago",
+  "pagamento",
+  "cb_pag",
+  "motivo_cancelamento",
+  "ultimo_lembrete",
+  "sec_hist",
+  "eventos"
+ ],
+ "fields": [
+  {
+   "default": "Em aberto",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Situação",
+   "options": "Em aberto\nPago\nVencido\nCancelado"
+  },
+  {
+   "fieldname": "cliente",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "nome_cliente",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nome do Cliente"
+  },
+  {
+   "fieldname": "documento_cliente",
+   "fieldtype": "Data",
+   "label": "CNPJ/CPF"
+  },
+  {
+   "fieldname": "email_cliente",
+   "fieldtype": "Data",
+   "label": "E-mail",
+   "options": "Email"
+  },
+  {
+   "fieldname": "fatura",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Fatura",
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "nota_fiscal",
+   "fieldtype": "Link",
+   "label": "Nota Fiscal",
+   "options": "Nota Fiscal"
+  },
+  {
+   "fieldname": "ambiente",
+   "fieldtype": "Data",
+   "label": "Ambiente",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "valor",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor",
+   "reqd": 1
+  },
+  {
+   "fieldname": "emissao",
+   "fieldtype": "Date",
+   "label": "Emitido em"
+  },
+  {
+   "fieldname": "vencimento",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Vencimento",
+   "reqd": 1
+  },
+  {
+   "fieldname": "multa_percentual",
+   "fieldtype": "Percent",
+   "label": "Multa"
+  },
+  {
+   "fieldname": "juros_mes_percentual",
+   "fieldtype": "Percent",
+   "label": "Juros ao Mês"
+  },
+  {
+   "fieldname": "instrucoes",
+   "fieldtype": "Small Text",
+   "label": "Instruções"
+  },
+  {
+   "fieldname": "sec_cod",
+   "fieldtype": "Section Break",
+   "label": "Códigos"
+  },
+  {
+   "fieldname": "banco",
+   "fieldtype": "Data",
+   "label": "Banco"
+  },
+  {
+   "fieldname": "nosso_numero",
+   "fieldtype": "Data",
+   "label": "Nosso Número"
+  },
+  {
+   "fieldname": "linha_digitavel",
+   "fieldtype": "Data",
+   "label": "Linha Digitável"
+  },
+  {
+   "fieldname": "codigo_barras",
+   "fieldtype": "Data",
+   "label": "Código de Barras"
+  },
+  {
+   "fieldname": "pix_copia_cola",
+   "fieldtype": "Small Text",
+   "label": "Pix Copia e Cola"
+  },
+  {
+   "fieldname": "sec_pag",
+   "fieldtype": "Section Break",
+   "label": "Pagamento"
+  },
+  {
+   "fieldname": "pago_em",
+   "fieldtype": "Date",
+   "label": "Pago em"
+  },
+  {
+   "fieldname": "valor_pago",
+   "fieldtype": "Currency",
+   "label": "Valor Pago"
+  },
+  {
+   "fieldname": "pagamento",
+   "fieldtype": "Link",
+   "label": "Lançamento no ERP",
+   "options": "Payment Entry"
+  },
+  {
+   "fieldname": "cb_pag",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "motivo_cancelamento",
+   "fieldtype": "Small Text",
+   "label": "Motivo do Cancelamento"
+  },
+  {
+   "fieldname": "ultimo_lembrete",
+   "fieldtype": "Date",
+   "label": "Último Lembrete"
+  },
+  {
+   "fieldname": "sec_hist",
+   "fieldtype": "Section Break",
+   "label": "Histórico"
+  },
+  {
+   "fieldname": "eventos",
+   "fieldtype": "Table",
+   "label": "Eventos",
+   "options": "Evento Fiscal"
+  }
+ ],
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Boleto Cobranca",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "nome_cliente,fatura,nosso_numero",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "nome_cliente",
+ "track_changes": 1
+}

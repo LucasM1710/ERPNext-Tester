@@ -58,4 +58,6 @@ jspm_packages/
 # para o servidor não precisar de build. Só as dependências ficam de fora.
 frontend/node_modules/
 frontend_ti/node_modules/
+frontend_fiscal/node_modules/
 # Central de TI: o build (solucoes/public/central e solucoes/www/ti.html) também vai para o git
+# Fiscal: o build (solucoes/public/fiscal e solucoes/www/fiscal.html) também vai para o git

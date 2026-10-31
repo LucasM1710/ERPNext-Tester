@@ -6,6 +6,9 @@
     "portal:build": "cd frontend && yarn build",
     "ti:install": "cd frontend_ti && yarn install",
     "ti:dev": "cd frontend_ti && yarn dev",
-    "ti:build": "cd frontend_ti && yarn build"
+    "ti:build": "cd frontend_ti && yarn build",
+    "fiscal:install": "cd frontend_fiscal && yarn install",
+    "fiscal:dev": "cd frontend_fiscal && yarn dev",
+    "fiscal:build": "cd frontend_fiscal && yarn build"
   }
 }

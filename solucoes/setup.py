@@ -59,8 +59,8 @@ def conferir():
 			continue
 		problemas += [f"FALTA o campo {doctype}.{c}" for c in lista if not frappe.db.has_column(doctype, c)]
 
-	# 2) Nenhum DocType/módulo do app (portal e Central de TI) pode já existir em outro app
-	for pasta_modulo, nome_modulo in (("metrologia", "Metrologia"), ("central_ti", "Central TI")):
+	# 2) Nenhum DocType/módulo do app (portal, Central de TI e Fiscal) pode já existir em outro app
+	for pasta_modulo, nome_modulo in (("metrologia", "Metrologia"), ("central_ti", "Central TI"), ("fiscal", "Fiscal")):
 		raiz = frappe.get_app_path(APP, pasta_modulo, "doctype")
 		for pasta in sorted(os.listdir(raiz)):
 			caminho = os.path.join(raiz, pasta, f"{pasta}.json")
@@ -94,6 +94,10 @@ def after_migrate():
 	from solucoes.central_ti.instalacao import configurar
 
 	configurar()
+	# Fiscal: defaults da configuração e naturezas de operação padrão
+	from solucoes.fiscal.instalacao import configurar as configurar_fiscal
+
+	configurar_fiscal()
 
 
 def garantir_modulos():

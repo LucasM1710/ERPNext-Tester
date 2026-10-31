@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "creation": "2026-10-31 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "data",
+  "evento",
+  "detalhe",
+  "usuario"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "data",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Data"
+  },
+  {
+   "columns": 3,
+   "fieldname": "evento",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Evento"
+  },
+  {
+   "columns": 4,
+   "fieldname": "detalhe",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Detalhe"
+  },
+  {
+   "columns": 1,
+   "fieldname": "usuario",
+   "fieldtype": "Link",
+   "label": "Usuário",
+   "options": "User"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-31 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fiscal",
+ "name": "Evento Fiscal",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
